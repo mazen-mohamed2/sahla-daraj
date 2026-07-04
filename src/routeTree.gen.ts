@@ -16,6 +16,7 @@ import { Route as AgencyIndexRouteImport } from './routes/agency.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
+import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
@@ -56,6 +57,11 @@ const AgencyTokensRoute = AgencyTokensRouteImport.update({
 const AgencyInventoryRoute = AgencyInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyBidsRoute = AgencyBidsRouteImport.update({
+  id: '/bids',
+  path: '/bids',
   getParentRoute: () => AgencyRoute,
 } as any)
 const AgencyAddListingRoute = AgencyAddListingRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin/': typeof AdminIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin': typeof AdminIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin/': typeof AdminIndexRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/users'
     | '/agency/add-listing'
+    | '/agency/bids'
     | '/agency/inventory'
     | '/agency/tokens'
     | '/admin/'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/users'
     | '/agency/add-listing'
+    | '/agency/bids'
     | '/agency/inventory'
     | '/agency/tokens'
     | '/admin'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/users'
     | '/agency/add-listing'
+    | '/agency/bids'
     | '/agency/inventory'
     | '/agency/tokens'
     | '/admin/'
@@ -234,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory'
       fullPath: '/agency/inventory'
       preLoaderRoute: typeof AgencyInventoryRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/bids': {
+      id: '/agency/bids'
+      path: '/bids'
+      fullPath: '/agency/bids'
+      preLoaderRoute: typeof AgencyBidsRouteImport
       parentRoute: typeof AgencyRoute
     }
     '/agency/add-listing': {
@@ -303,6 +322,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgencyRouteChildren {
   AgencyAddListingRoute: typeof AgencyAddListingRoute
+  AgencyBidsRoute: typeof AgencyBidsRoute
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyTokensRoute: typeof AgencyTokensRoute
   AgencyIndexRoute: typeof AgencyIndexRoute
@@ -310,6 +330,7 @@ interface AgencyRouteChildren {
 
 const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyAddListingRoute: AgencyAddListingRoute,
+  AgencyBidsRoute: AgencyBidsRoute,
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyTokensRoute: AgencyTokensRoute,
   AgencyIndexRoute: AgencyIndexRoute,
