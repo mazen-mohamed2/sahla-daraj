@@ -18,6 +18,7 @@ import { Route as AgencyIndexRouteImport } from './routes/agency.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
+import { Route as UserImportRequestsRouteImport } from './routes/user.import-requests'
 import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
@@ -74,6 +75,11 @@ const UserWalletRoute = UserWalletRouteImport.update({
 const UserListingsRoute = UserListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserImportRequestsRoute = UserImportRequestsRouteImport.update({
+  id: '/import-requests',
+  path: '/import-requests',
   getParentRoute: () => UserRoute,
 } as any)
 const UserEscrowRoute = UserEscrowRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin': typeof AdminIndexRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
     | '/admin/'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
     | '/admin'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
     | '/admin/'
@@ -343,6 +355,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/user/listings'
       preLoaderRoute: typeof UserListingsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/import-requests': {
+      id: '/user/import-requests'
+      path: '/import-requests'
+      fullPath: '/user/import-requests'
+      preLoaderRoute: typeof UserImportRequestsRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/escrow': {
@@ -476,6 +495,7 @@ const AgencyRouteWithChildren =
 interface UserRouteChildren {
   UserCreateListingRoute: typeof UserCreateListingRoute
   UserEscrowRoute: typeof UserEscrowRoute
+  UserImportRequestsRoute: typeof UserImportRequestsRoute
   UserListingsRoute: typeof UserListingsRoute
   UserWalletRoute: typeof UserWalletRoute
   UserIndexRoute: typeof UserIndexRoute
@@ -484,6 +504,7 @@ interface UserRouteChildren {
 const UserRouteChildren: UserRouteChildren = {
   UserCreateListingRoute: UserCreateListingRoute,
   UserEscrowRoute: UserEscrowRoute,
+  UserImportRequestsRoute: UserImportRequestsRoute,
   UserListingsRoute: UserListingsRoute,
   UserWalletRoute: UserWalletRoute,
   UserIndexRoute: UserIndexRoute,
