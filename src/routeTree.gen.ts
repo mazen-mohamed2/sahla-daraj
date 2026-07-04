@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
 
 const AdminRoute = AdminRouteImport.update({
@@ -41,6 +42,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFinancialRoute = AdminFinancialRouteImport.update({
+  id: '/financial',
+  path: '/financial',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDisputesRoute = AdminDisputesRouteImport.update({
   id: '/disputes',
   path: '/disputes',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin': typeof AdminIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
@@ -77,16 +86,24 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin/disputes'
+    | '/admin/financial'
     | '/admin/listings'
     | '/admin/users'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/disputes' | '/admin/listings' | '/admin/users' | '/admin'
+  to:
+    | '/'
+    | '/admin/disputes'
+    | '/admin/financial'
+    | '/admin/listings'
+    | '/admin/users'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/admin/disputes'
+    | '/admin/financial'
     | '/admin/listings'
     | '/admin/users'
     | '/admin/'
@@ -134,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/financial': {
+      id: '/admin/financial'
+      path: '/financial'
+      fullPath: '/admin/financial'
+      preLoaderRoute: typeof AdminFinancialRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/disputes': {
       id: '/admin/disputes'
       path: '/disputes'
@@ -146,6 +170,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminDisputesRoute: typeof AdminDisputesRoute
+  AdminFinancialRoute: typeof AdminFinancialRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -153,6 +178,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminDisputesRoute: AdminDisputesRoute,
+  AdminFinancialRoute: AdminFinancialRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
