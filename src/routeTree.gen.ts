@@ -18,6 +18,7 @@ import { Route as AgencyIndexRouteImport } from './routes/agency.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
+import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
@@ -73,6 +74,11 @@ const UserWalletRoute = UserWalletRouteImport.update({
 const UserListingsRoute = UserListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserEscrowRoute = UserEscrowRouteImport.update({
+  id: '/escrow',
+  path: '/escrow',
   getParentRoute: () => UserRoute,
 } as any)
 const UserCreateListingRoute = UserCreateListingRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin': typeof AdminIndexRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/tokens'
     | '/user/create-listing'
+    | '/user/escrow'
     | '/user/listings'
     | '/user/wallet'
     | '/admin/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/tokens'
     | '/user/create-listing'
+    | '/user/escrow'
     | '/user/listings'
     | '/user/wallet'
     | '/admin'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/tokens'
     | '/user/create-listing'
+    | '/user/escrow'
     | '/user/listings'
     | '/user/wallet'
     | '/admin/'
@@ -331,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/user/listings'
       preLoaderRoute: typeof UserListingsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/escrow': {
+      id: '/user/escrow'
+      path: '/escrow'
+      fullPath: '/user/escrow'
+      preLoaderRoute: typeof UserEscrowRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/create-listing': {
@@ -456,6 +475,7 @@ const AgencyRouteWithChildren =
 
 interface UserRouteChildren {
   UserCreateListingRoute: typeof UserCreateListingRoute
+  UserEscrowRoute: typeof UserEscrowRoute
   UserListingsRoute: typeof UserListingsRoute
   UserWalletRoute: typeof UserWalletRoute
   UserIndexRoute: typeof UserIndexRoute
@@ -463,6 +483,7 @@ interface UserRouteChildren {
 
 const UserRouteChildren: UserRouteChildren = {
   UserCreateListingRoute: UserCreateListingRoute,
+  UserEscrowRoute: UserEscrowRoute,
   UserListingsRoute: UserListingsRoute,
   UserWalletRoute: UserWalletRoute,
   UserIndexRoute: UserIndexRoute,
