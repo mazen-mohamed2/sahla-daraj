@@ -43,7 +43,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex flex-col gap-1 p-3">
       {items.map((it) => {
-        const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
+        const active = "exact" in it && it.exact ? pathname === it.to : pathname.startsWith(it.to);
         const Icon = it.icon;
         return (
           <Link
