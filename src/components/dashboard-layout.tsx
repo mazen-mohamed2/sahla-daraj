@@ -72,7 +72,7 @@ export function DashboardLayout({ children, title }: { children: ReactNode; titl
             </div>
           </div>
 
-          <Select value={role} onValueChange={(v) => setRole(v as Role)}>
+          <Select value={role} onValueChange={(v) => handleRoleChange(v as Role)}>
             <SelectTrigger className="w-32 sm:w-40"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="admin">المدير العام</SelectItem>
