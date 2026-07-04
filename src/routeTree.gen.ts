@@ -13,6 +13,7 @@ import { Route as UserRouteImport } from './routes/user'
 import { Route as AgencyRouteImport } from './routes/agency'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserIndexRouteImport } from './routes/user.index'
 import { Route as AgencyIndexRouteImport } from './routes/agency.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
@@ -45,6 +46,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const UserIndexRoute = UserIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UserRoute,
 } as any)
 const AgencyIndexRoute = AgencyIndexRouteImport.update({
   id: '/',
@@ -111,7 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/agency': typeof AgencyRouteWithChildren
-  '/user': typeof UserRoute
+  '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -124,10 +130,10 @@ export interface FileRoutesByFullPath {
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin/': typeof AdminIndexRoute
   '/agency/': typeof AgencyIndexRoute
+  '/user/': typeof UserIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/user': typeof UserRoute
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -140,13 +146,14 @@ export interface FileRoutesByTo {
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin': typeof AdminIndexRoute
   '/agency': typeof AgencyIndexRoute
+  '/user': typeof UserIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/agency': typeof AgencyRouteWithChildren
-  '/user': typeof UserRoute
+  '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -159,6 +166,7 @@ export interface FileRoutesById {
   '/agency/tokens': typeof AgencyTokensRoute
   '/admin/': typeof AdminIndexRoute
   '/agency/': typeof AgencyIndexRoute
+  '/user/': typeof UserIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,10 +187,10 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/admin/'
     | '/agency/'
+    | '/user/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/user'
     | '/admin/agencies'
     | '/admin/disputes'
     | '/admin/financial'
@@ -195,6 +203,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/admin'
     | '/agency'
+    | '/user'
   id:
     | '__root__'
     | '/'
@@ -213,13 +222,14 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/admin/'
     | '/agency/'
+    | '/user/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AgencyRoute: typeof AgencyRouteWithChildren
-  UserRoute: typeof UserRoute
+  UserRoute: typeof UserRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -251,6 +261,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/user/': {
+      id: '/user/'
+      path: '/'
+      fullPath: '/user/'
+      preLoaderRoute: typeof UserIndexRouteImport
+      parentRoute: typeof UserRoute
     }
     '/agency/': {
       id: '/agency/'
@@ -380,11 +397,21 @@ const AgencyRouteChildren: AgencyRouteChildren = {
 const AgencyRouteWithChildren =
   AgencyRoute._addFileChildren(AgencyRouteChildren)
 
+interface UserRouteChildren {
+  UserIndexRoute: typeof UserIndexRoute
+}
+
+const UserRouteChildren: UserRouteChildren = {
+  UserIndexRoute: UserIndexRoute,
+}
+
+const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AgencyRoute: AgencyRouteWithChildren,
-  UserRoute: UserRoute,
+  UserRoute: UserRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
