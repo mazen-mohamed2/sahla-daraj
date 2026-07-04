@@ -10,10 +10,18 @@ import { useAuthStore, type Role } from "@/store/auth";
 import { useUIStore } from "@/store/ui";
 import { FLAGS } from "@/lib/flags";
 import { Car } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 export function DashboardLayout({ children, title }: { children: ReactNode; title: string }) {
   const { role, setRole, name, avatar } = useAuthStore();
   const { theme, toggleTheme } = useUIStore();
+  const navigate = useNavigate();
+
+  const handleRoleChange = (r: Role) => {
+    setRole(r);
+    navigate({ to: r === "admin" ? "/admin" : r === "agency" ? "/agency" : "/user" });
+  };
+
 
   const roleLabel = role === "admin" ? "المدير العام" : role === "agency" ? "معرض" : "مستخدم";
 
