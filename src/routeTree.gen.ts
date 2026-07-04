@@ -22,6 +22,7 @@ import { Route as UserImportRequestsRouteImport } from './routes/user.import-req
 import { Route as UserFavoritesRouteImport } from './routes/user.favorites'
 import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
+import { Route as UserChatRouteImport } from './routes/user.chat'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
 import { Route as AgencyChatRouteImport } from './routes/agency.chat'
@@ -98,6 +99,11 @@ const UserCreateListingRoute = UserCreateListingRouteImport.update({
   path: '/create-listing',
   getParentRoute: () => UserRoute,
 } as any)
+const UserChatRoute = UserChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => UserRoute,
+} as any)
 const AgencyTokensRoute = AgencyTokensRouteImport.update({
   id: '/tokens',
   path: '/tokens',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
   '/user/favorites': typeof UserFavoritesRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
   '/user/favorites': typeof UserFavoritesRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
   '/user/favorites': typeof UserFavoritesRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/tokens'
+    | '/user/chat'
     | '/user/create-listing'
     | '/user/escrow'
     | '/user/favorites'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/tokens'
+    | '/user/chat'
     | '/user/create-listing'
     | '/user/escrow'
     | '/user/favorites'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/tokens'
+    | '/user/chat'
     | '/user/create-listing'
     | '/user/escrow'
     | '/user/favorites'
@@ -395,6 +407,13 @@ declare module '@tanstack/react-router' {
       path: '/create-listing'
       fullPath: '/user/create-listing'
       preLoaderRoute: typeof UserCreateListingRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/chat': {
+      id: '/user/chat'
+      path: '/chat'
+      fullPath: '/user/chat'
+      preLoaderRoute: typeof UserChatRouteImport
       parentRoute: typeof UserRoute
     }
     '/agency/tokens': {
@@ -512,6 +531,7 @@ const AgencyRouteWithChildren =
   AgencyRoute._addFileChildren(AgencyRouteChildren)
 
 interface UserRouteChildren {
+  UserChatRoute: typeof UserChatRoute
   UserCreateListingRoute: typeof UserCreateListingRoute
   UserEscrowRoute: typeof UserEscrowRoute
   UserFavoritesRoute: typeof UserFavoritesRoute
@@ -522,6 +542,7 @@ interface UserRouteChildren {
 }
 
 const UserRouteChildren: UserRouteChildren = {
+  UserChatRoute: UserChatRoute,
   UserCreateListingRoute: UserCreateListingRoute,
   UserEscrowRoute: UserEscrowRoute,
   UserFavoritesRoute: UserFavoritesRoute,
