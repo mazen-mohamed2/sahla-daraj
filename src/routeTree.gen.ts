@@ -19,6 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
 import { Route as UserImportRequestsRouteImport } from './routes/user.import-requests'
+import { Route as UserFavoritesRouteImport } from './routes/user.favorites'
 import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
@@ -80,6 +81,11 @@ const UserListingsRoute = UserListingsRouteImport.update({
 const UserImportRequestsRoute = UserImportRequestsRouteImport.update({
   id: '/import-requests',
   path: '/import-requests',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserFavoritesRoute = UserFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => UserRoute,
 } as any)
 const UserEscrowRoute = UserEscrowRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/create-listing': typeof UserCreateListingRoute
   '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/agency/tokens'
     | '/user/create-listing'
     | '/user/escrow'
+    | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
     | '/user/wallet'
@@ -362,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/import-requests'
       fullPath: '/user/import-requests'
       preLoaderRoute: typeof UserImportRequestsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/favorites': {
+      id: '/user/favorites'
+      path: '/favorites'
+      fullPath: '/user/favorites'
+      preLoaderRoute: typeof UserFavoritesRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/escrow': {
@@ -495,6 +514,7 @@ const AgencyRouteWithChildren =
 interface UserRouteChildren {
   UserCreateListingRoute: typeof UserCreateListingRoute
   UserEscrowRoute: typeof UserEscrowRoute
+  UserFavoritesRoute: typeof UserFavoritesRoute
   UserImportRequestsRoute: typeof UserImportRequestsRoute
   UserListingsRoute: typeof UserListingsRoute
   UserWalletRoute: typeof UserWalletRoute
@@ -504,6 +524,7 @@ interface UserRouteChildren {
 const UserRouteChildren: UserRouteChildren = {
   UserCreateListingRoute: UserCreateListingRoute,
   UserEscrowRoute: UserEscrowRoute,
+  UserFavoritesRoute: UserFavoritesRoute,
   UserImportRequestsRoute: UserImportRequestsRoute,
   UserListingsRoute: UserListingsRoute,
   UserWalletRoute: UserWalletRoute,
