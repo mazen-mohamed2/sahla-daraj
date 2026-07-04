@@ -9,38 +9,336 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserRouteImport } from './routes/user'
+import { Route as AgencyRouteImport } from './routes/agency'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserIndexRouteImport } from './routes/user.index'
+import { Route as AgencyIndexRouteImport } from './routes/agency.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as UserWalletRouteImport } from './routes/user.wallet'
+import { Route as UserListingsRouteImport } from './routes/user.listings'
+import { Route as UserImportRequestsRouteImport } from './routes/user.import-requests'
+import { Route as UserFavoritesRouteImport } from './routes/user.favorites'
+import { Route as UserEscrowRouteImport } from './routes/user.escrow'
+import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
+import { Route as UserChatRouteImport } from './routes/user.chat'
+import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
+import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
+import { Route as AgencyChatRouteImport } from './routes/agency.chat'
+import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
+import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
+import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
+import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 
+const UserRoute = UserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyRoute = AgencyRouteImport.update({
+  id: '/agency',
+  path: '/agency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UserIndexRoute = UserIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UserRoute,
+} as any)
+const AgencyIndexRoute = AgencyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const UserWalletRoute = UserWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserListingsRoute = UserListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserImportRequestsRoute = UserImportRequestsRouteImport.update({
+  id: '/import-requests',
+  path: '/import-requests',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserFavoritesRoute = UserFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserEscrowRoute = UserEscrowRouteImport.update({
+  id: '/escrow',
+  path: '/escrow',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserCreateListingRoute = UserCreateListingRouteImport.update({
+  id: '/create-listing',
+  path: '/create-listing',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserChatRoute = UserChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => UserRoute,
+} as any)
+const AgencyTokensRoute = AgencyTokensRouteImport.update({
+  id: '/tokens',
+  path: '/tokens',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyInventoryRoute = AgencyInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyChatRoute = AgencyChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyBidsRoute = AgencyBidsRouteImport.update({
+  id: '/bids',
+  path: '/bids',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyAddListingRoute = AgencyAddListingRouteImport.update({
+  id: '/add-listing',
+  path: '/add-listing',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminListingsRoute = AdminListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFinancialRoute = AdminFinancialRouteImport.update({
+  id: '/financial',
+  path: '/financial',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDisputesRoute = AdminDisputesRouteImport.update({
+  id: '/disputes',
+  path: '/disputes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAgenciesRoute = AdminAgenciesRouteImport.update({
+  id: '/agencies',
+  path: '/agencies',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/agency': typeof AgencyRouteWithChildren
+  '/user': typeof UserRouteWithChildren
+  '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
+  '/agency/chat': typeof AgencyChatRoute
+  '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
+  '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
+  '/user/listings': typeof UserListingsRoute
+  '/user/wallet': typeof UserWalletRoute
+  '/admin/': typeof AdminIndexRoute
+  '/agency/': typeof AgencyIndexRoute
+  '/user/': typeof UserIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
+  '/agency/chat': typeof AgencyChatRoute
+  '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
+  '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
+  '/user/listings': typeof UserListingsRoute
+  '/user/wallet': typeof UserWalletRoute
+  '/admin': typeof AdminIndexRoute
+  '/agency': typeof AgencyIndexRoute
+  '/user': typeof UserIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/agency': typeof AgencyRouteWithChildren
+  '/user': typeof UserRouteWithChildren
+  '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/financial': typeof AdminFinancialRoute
+  '/admin/listings': typeof AdminListingsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/agency/add-listing': typeof AgencyAddListingRoute
+  '/agency/bids': typeof AgencyBidsRoute
+  '/agency/chat': typeof AgencyChatRoute
+  '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/tokens': typeof AgencyTokensRoute
+  '/user/chat': typeof UserChatRoute
+  '/user/create-listing': typeof UserCreateListingRoute
+  '/user/escrow': typeof UserEscrowRoute
+  '/user/favorites': typeof UserFavoritesRoute
+  '/user/import-requests': typeof UserImportRequestsRoute
+  '/user/listings': typeof UserListingsRoute
+  '/user/wallet': typeof UserWalletRoute
+  '/admin/': typeof AdminIndexRoute
+  '/agency/': typeof AgencyIndexRoute
+  '/user/': typeof UserIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/agency'
+    | '/user'
+    | '/admin/agencies'
+    | '/admin/disputes'
+    | '/admin/financial'
+    | '/admin/listings'
+    | '/admin/users'
+    | '/agency/add-listing'
+    | '/agency/bids'
+    | '/agency/chat'
+    | '/agency/inventory'
+    | '/agency/tokens'
+    | '/user/chat'
+    | '/user/create-listing'
+    | '/user/escrow'
+    | '/user/favorites'
+    | '/user/import-requests'
+    | '/user/listings'
+    | '/user/wallet'
+    | '/admin/'
+    | '/agency/'
+    | '/user/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin/agencies'
+    | '/admin/disputes'
+    | '/admin/financial'
+    | '/admin/listings'
+    | '/admin/users'
+    | '/agency/add-listing'
+    | '/agency/bids'
+    | '/agency/chat'
+    | '/agency/inventory'
+    | '/agency/tokens'
+    | '/user/chat'
+    | '/user/create-listing'
+    | '/user/escrow'
+    | '/user/favorites'
+    | '/user/import-requests'
+    | '/user/listings'
+    | '/user/wallet'
+    | '/admin'
+    | '/agency'
+    | '/user'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/agency'
+    | '/user'
+    | '/admin/agencies'
+    | '/admin/disputes'
+    | '/admin/financial'
+    | '/admin/listings'
+    | '/admin/users'
+    | '/agency/add-listing'
+    | '/agency/bids'
+    | '/agency/chat'
+    | '/agency/inventory'
+    | '/agency/tokens'
+    | '/user/chat'
+    | '/user/create-listing'
+    | '/user/escrow'
+    | '/user/favorites'
+    | '/user/import-requests'
+    | '/user/listings'
+    | '/user/wallet'
+    | '/admin/'
+    | '/agency/'
+    | '/user/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  AgencyRoute: typeof AgencyRouteWithChildren
+  UserRoute: typeof UserRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user': {
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency': {
+      id: '/agency'
+      path: '/agency'
+      fullPath: '/agency'
+      preLoaderRoute: typeof AgencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +346,219 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/user/': {
+      id: '/user/'
+      path: '/'
+      fullPath: '/user/'
+      preLoaderRoute: typeof UserIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/agency/': {
+      id: '/agency/'
+      path: '/'
+      fullPath: '/agency/'
+      preLoaderRoute: typeof AgencyIndexRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/user/wallet': {
+      id: '/user/wallet'
+      path: '/wallet'
+      fullPath: '/user/wallet'
+      preLoaderRoute: typeof UserWalletRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/listings': {
+      id: '/user/listings'
+      path: '/listings'
+      fullPath: '/user/listings'
+      preLoaderRoute: typeof UserListingsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/import-requests': {
+      id: '/user/import-requests'
+      path: '/import-requests'
+      fullPath: '/user/import-requests'
+      preLoaderRoute: typeof UserImportRequestsRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/favorites': {
+      id: '/user/favorites'
+      path: '/favorites'
+      fullPath: '/user/favorites'
+      preLoaderRoute: typeof UserFavoritesRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/escrow': {
+      id: '/user/escrow'
+      path: '/escrow'
+      fullPath: '/user/escrow'
+      preLoaderRoute: typeof UserEscrowRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/create-listing': {
+      id: '/user/create-listing'
+      path: '/create-listing'
+      fullPath: '/user/create-listing'
+      preLoaderRoute: typeof UserCreateListingRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/chat': {
+      id: '/user/chat'
+      path: '/chat'
+      fullPath: '/user/chat'
+      preLoaderRoute: typeof UserChatRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/agency/tokens': {
+      id: '/agency/tokens'
+      path: '/tokens'
+      fullPath: '/agency/tokens'
+      preLoaderRoute: typeof AgencyTokensRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/inventory': {
+      id: '/agency/inventory'
+      path: '/inventory'
+      fullPath: '/agency/inventory'
+      preLoaderRoute: typeof AgencyInventoryRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/chat': {
+      id: '/agency/chat'
+      path: '/chat'
+      fullPath: '/agency/chat'
+      preLoaderRoute: typeof AgencyChatRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/bids': {
+      id: '/agency/bids'
+      path: '/bids'
+      fullPath: '/agency/bids'
+      preLoaderRoute: typeof AgencyBidsRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/add-listing': {
+      id: '/agency/add-listing'
+      path: '/add-listing'
+      fullPath: '/agency/add-listing'
+      preLoaderRoute: typeof AgencyAddListingRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/listings': {
+      id: '/admin/listings'
+      path: '/listings'
+      fullPath: '/admin/listings'
+      preLoaderRoute: typeof AdminListingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/financial': {
+      id: '/admin/financial'
+      path: '/financial'
+      fullPath: '/admin/financial'
+      preLoaderRoute: typeof AdminFinancialRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/disputes': {
+      id: '/admin/disputes'
+      path: '/disputes'
+      fullPath: '/admin/disputes'
+      preLoaderRoute: typeof AdminDisputesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/agencies': {
+      id: '/admin/agencies'
+      path: '/agencies'
+      fullPath: '/admin/agencies'
+      preLoaderRoute: typeof AdminAgenciesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAgenciesRoute: typeof AdminAgenciesRoute
+  AdminDisputesRoute: typeof AdminDisputesRoute
+  AdminFinancialRoute: typeof AdminFinancialRoute
+  AdminListingsRoute: typeof AdminListingsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgenciesRoute: AdminAgenciesRoute,
+  AdminDisputesRoute: AdminDisputesRoute,
+  AdminFinancialRoute: AdminFinancialRoute,
+  AdminListingsRoute: AdminListingsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface AgencyRouteChildren {
+  AgencyAddListingRoute: typeof AgencyAddListingRoute
+  AgencyBidsRoute: typeof AgencyBidsRoute
+  AgencyChatRoute: typeof AgencyChatRoute
+  AgencyInventoryRoute: typeof AgencyInventoryRoute
+  AgencyTokensRoute: typeof AgencyTokensRoute
+  AgencyIndexRoute: typeof AgencyIndexRoute
+}
+
+const AgencyRouteChildren: AgencyRouteChildren = {
+  AgencyAddListingRoute: AgencyAddListingRoute,
+  AgencyBidsRoute: AgencyBidsRoute,
+  AgencyChatRoute: AgencyChatRoute,
+  AgencyInventoryRoute: AgencyInventoryRoute,
+  AgencyTokensRoute: AgencyTokensRoute,
+  AgencyIndexRoute: AgencyIndexRoute,
+}
+
+const AgencyRouteWithChildren =
+  AgencyRoute._addFileChildren(AgencyRouteChildren)
+
+interface UserRouteChildren {
+  UserChatRoute: typeof UserChatRoute
+  UserCreateListingRoute: typeof UserCreateListingRoute
+  UserEscrowRoute: typeof UserEscrowRoute
+  UserFavoritesRoute: typeof UserFavoritesRoute
+  UserImportRequestsRoute: typeof UserImportRequestsRoute
+  UserListingsRoute: typeof UserListingsRoute
+  UserWalletRoute: typeof UserWalletRoute
+  UserIndexRoute: typeof UserIndexRoute
+}
+
+const UserRouteChildren: UserRouteChildren = {
+  UserChatRoute: UserChatRoute,
+  UserCreateListingRoute: UserCreateListingRoute,
+  UserEscrowRoute: UserEscrowRoute,
+  UserFavoritesRoute: UserFavoritesRoute,
+  UserImportRequestsRoute: UserImportRequestsRoute,
+  UserListingsRoute: UserListingsRoute,
+  UserWalletRoute: UserWalletRoute,
+  UserIndexRoute: UserIndexRoute,
+}
+
+const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  AgencyRoute: AgencyRouteWithChildren,
+  UserRoute: UserRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
