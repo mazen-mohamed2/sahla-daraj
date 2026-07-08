@@ -156,7 +156,8 @@ export const mockEscrows = Array.from({ length: 6 }).map((_, i) => ({
   listing: `${pick(carMakes, i).make} ${pick(carMakes, i).model}`,
   counterparty: pick(egyptianNames, i + 1),
   amount: 300000 + i * 125000,
-  status: (["holding","released","disputed","holding"] as const)[i % 4],
+  status: (["holding","holding","released","disputed","holding","refunded"] as const)[i % 6] as "holding" | "released" | "disputed" | "refunded",
+  reason: "" as string,
   createdAt: new Date(2025, 6, i + 2).toISOString(),
 }));
 
