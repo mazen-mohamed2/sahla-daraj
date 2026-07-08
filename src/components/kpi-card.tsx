@@ -16,7 +16,7 @@ export function KpiCard({
     destructive: "bg-destructive/10 text-destructive",
   }[tone];
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-md animate-in fade-in-0 duration-500">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -24,7 +24,7 @@ export function KpiCard({
             <div className="mt-2 font-display text-2xl font-bold tracking-tight truncate">{value}</div>
             {change && <div className="mt-1 text-xs text-success">{change}</div>}
           </div>
-          <div className={cn("grid size-11 shrink-0 place-items-center rounded-xl", toneClass)}>
+          <div className={cn("grid size-11 shrink-0 place-items-center rounded-xl transition-transform duration-300 hover:rotate-6", toneClass)}>
             <Icon className="size-5" />
           </div>
         </div>
