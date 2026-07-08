@@ -13,7 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Check, X, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog, ReasonDialog } from "@/components/flow";
 import type { ColumnDef } from "@tanstack/react-table";
+
+const REJECT_REASONS = ["وثائق غير مكتملة", "بيانات غير مطابقة", "عدم استيفاء الشروط", "شكاوى سابقة", "أخرى"];
 
 export const Route = createFileRoute("/admin/agencies")({ component: Agencies });
 
@@ -27,20 +30,10 @@ function Agencies() {
   const addAgency = useAddAgency();
 
   const [rejectTarget, setRejectTarget] = useState<App | null>(null);
-  const [reason, setReason] = useState("");
+  const [approveTarget, setApproveTarget] = useState<App | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [form, setForm] = useState({ name: "", contact: "", phone: "", city: "القاهرة", vehicles: 0 });
 
-  const handleApprove = (a: App) => {
-    updateStatus.mutate({ id: a.id, status: "approved" }, { onSuccess: () => toast.success(`✅ تم اعتماد ${a.name}`) });
-  };
-  const handleReject = () => {
-    if (!rejectTarget) return;
-    updateStatus.mutate(
-      { id: rejectTarget.id, status: "rejected", reason },
-      { onSuccess: () => { toast.error(`تم رفض ${rejectTarget.name}`); setRejectTarget(null); setReason(""); } },
-    );
-  };
   const handleAdd = () => {
     if (!form.name.trim() || !form.contact.trim() || !form.phone.trim()) { toast.error("جميع الحقول مطلوبة"); return; }
     addAgency.mutate(form, { onSuccess: () => { toast.success("✅ تم إضافة المعرض"); setAddOpen(false); setForm({ name: "", contact: "", phone: "", city: "القاهرة", vehicles: 0 }); } });
