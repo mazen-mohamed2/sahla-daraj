@@ -5,14 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/data-table";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Coins, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate } from "@/services/mock-data";
 import { usePurchaseTokens } from "@/hooks/queries";
+import { MultiStepDialog, PaymentMethodPicker, ReviewRow, ProcessingStep, SuccessStep, FailureStep, StepFooter, METHOD_LABEL, type PaymentMethod, useMockProcess } from "@/components/flow";
+import { cn } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/agency/tokens")({ component: Tokens });
@@ -27,9 +25,17 @@ const seedHistory: Tx[] = Array.from({ length: 8 }).map((_, i) => ({
 }));
 
 const PACKAGES = [
-  { amount: 100, price: 200, label: "100 توكن — 200 ج.م" },
-  { amount: 500, price: 900, label: "500 توكن — 900 ج.م (الأوفر)" },
-  { amount: 1000, price: 1600, label: "1000 توكن — 1,600 ج.م" },
+  { amount: 100, price: 200, label: "الأساسية", tag: "" },
+  { amount: 500, price: 900, label: "الأكثر شعبية", tag: "الأوفر (وفر 10%)" },
+  { amount: 1000, price: 1600, label: "الاحترافية", tag: "وفر 20%" },
+  { amount: 3000, price: 4500, label: "المؤسسات", tag: "وفر 25%" },
+];
+
+const STEPS = [
+  { key: "pkg", label: "الباقة" },
+  { key: "method", label: "الدفع" },
+  { key: "review", label: "المراجعة" },
+  { key: "done", label: "التأكيد" },
 ];
 
 function Tokens() {
@@ -37,20 +43,31 @@ function Tokens() {
   const [balance, setBalance] = useState(2450);
   const [history, setHistory] = useState<Tx[]>(seedHistory);
   const [open, setOpen] = useState(false);
-  const [pkg, setPkg] = useState("500");
-  const [method, setMethod] = useState<"vodafone" | "instapay" | "card">("vodafone");
+  const [step, setStep] = useState(0);
+  const [pkg, setPkg] = useState(1);
+  const [method, setMethod] = useState<PaymentMethod>("vodafone");
   const [account, setAccount] = useState("");
+  const [acctError, setAcctError] = useState<string | undefined>();
+  const proc = useMockProcess();
 
-  const confirmBuy = () => {
-    const selected = PACKAGES.find((p) => String(p.amount) === pkg)!;
-    if (!account.trim()) { toast.error("أدخل بيانات الدفع"); return; }
-    purchase.mutate(selected.amount, {
-      onSuccess: (r) => {
-        setBalance((b) => b + selected.amount);
-        setHistory((h) => [{ id: r.transactionId, type: "شراء", amount: selected.amount, date: new Date().toISOString() }, ...h]);
-        toast.success(`✅ تم شراء ${selected.amount} توكن بنجاح`);
-        setOpen(false); setAccount("");
-      },
+  const selected = PACKAGES[pkg];
+
+  const close = () => {
+    setOpen(false);
+    setTimeout(() => { setStep(0); setPkg(1); setMethod("vodafone"); setAccount(""); setAcctError(undefined); proc.reset(); }, 300);
+  };
+
+  const nextMethod = () => {
+    if (account.trim().length < 6) { setAcctError("بيانات الدفع غير صحيحة"); return; }
+    setAcctError(undefined); setStep(2);
+  };
+
+  const confirm = async () => {
+    setStep(3);
+    await proc.run(async () => {
+      const r = await purchase.mutateAsync(selected.amount);
+      setBalance((b) => b + selected.amount);
+      setHistory((h) => [{ id: r.transactionId, type: "شراء", amount: selected.amount, date: new Date().toISOString() }, ...h]);
     });
   };
 
@@ -91,43 +108,59 @@ function Tokens() {
         </CardContent>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent dir="rtl">
-          <DialogHeader><DialogTitle>شراء رصيد توكن</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label className="mb-2 block">اختر الباقة</Label>
-              <RadioGroup value={pkg} onValueChange={setPkg} className="space-y-2">
-                {PACKAGES.map((p) => (
-                  <label key={p.amount} className="flex items-center gap-2 rounded-lg border p-3 cursor-pointer hover:bg-muted/40">
-                    <RadioGroupItem value={String(p.amount)} />
-                    <span className="font-medium">{p.label}</span>
-                  </label>
-                ))}
-              </RadioGroup>
+      <MultiStepDialog open={open} onOpenChange={(o) => !o && close()} title="شراء رصيد توكن" steps={STEPS} currentStep={Math.min(step, 3)} locked={proc.status === "processing"}>
+        {step === 0 && (
+          <div>
+            <Label className="mb-2 block">اختر الباقة</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {PACKAGES.map((p, i) => {
+                const active = i === pkg;
+                return (
+                  <button key={p.amount} type="button" onClick={() => setPkg(i)}
+                    className={cn("text-start rounded-lg border p-3 transition-all", active ? "border-primary bg-primary/5 ring-2 ring-primary/30" : "hover:bg-muted/40")}>
+                    <div className="text-xs text-muted-foreground">{p.label}</div>
+                    <div className="font-display font-bold text-lg">{p.amount.toLocaleString("ar-EG")} توكن</div>
+                    <div className="text-sm">{p.price.toLocaleString("ar-EG")} ج.م</div>
+                    {p.tag && <div className="mt-1 inline-block text-[10px] bg-success/15 text-success rounded px-2 py-0.5">{p.tag}</div>}
+                  </button>
+                );
+              })}
             </div>
-            <div>
-              <Label>طريقة الدفع</Label>
-              <Select value={method} onValueChange={(v) => setMethod(v as typeof method)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="vodafone">فودافون كاش</SelectItem>
-                  <SelectItem value="instapay">إنستاباي</SelectItem>
-                  <SelectItem value="card">بطاقة بنكية</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>{method === "card" ? "رقم البطاقة" : "رقم المحفظة"}</Label>
-              <Input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={method === "card" ? "0000 0000 0000 0000" : "+20 100 000 0000"} />
-            </div>
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={close}>إلغاء</Button>
+              <Button className="flex-1" onClick={() => setStep(1)}>متابعة</Button>
+            </StepFooter>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>إلغاء</Button>
-            <Button onClick={confirmBuy} disabled={purchase.isPending}>{purchase.isPending ? "جارٍ..." : "تأكيد الشراء"}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        )}
+        {step === 1 && (
+          <div>
+            <PaymentMethodPicker value={method} onChange={setMethod} account={account} onAccountChange={setAccount} error={acctError} />
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(0)}>رجوع</Button>
+              <Button className="flex-1" onClick={nextMethod}>متابعة</Button>
+            </StepFooter>
+          </div>
+        )}
+        {step === 2 && (
+          <div>
+            <div className="rounded-lg border p-3">
+              <ReviewRow label="الباقة" value={`${selected.amount.toLocaleString("ar-EG")} توكن`} />
+              <ReviewRow label="السعر" value={`${selected.price.toLocaleString("ar-EG")} ج.م`} emphasis />
+              <ReviewRow label="طريقة الدفع" value={METHOD_LABEL[method]} />
+              <ReviewRow label="الحساب" value={<span className="font-mono">{account}</span>} />
+            </div>
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>رجوع</Button>
+              <Button className="flex-1" onClick={confirm}>تأكيد الشراء</Button>
+            </StepFooter>
+          </div>
+        )}
+        {step === 3 && proc.status === "processing" && <ProcessingStep />}
+        {step === 3 && proc.status === "success" && (
+          <SuccessStep title="تم إضافة الرصيد" message={<>تمت إضافة <strong>{selected.amount.toLocaleString("ar-EG")}</strong> توكن إلى حسابك.</>} onPrimary={() => { toast.success("تم تحديث الرصيد"); close(); }} />
+        )}
+        {step === 3 && proc.status === "error" && <FailureStep message={proc.error ?? undefined} onRetry={confirm} onCancel={close} />}
+      </MultiStepDialog>
     </DashboardLayout>
   );
 }
