@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { KpiCard } from "@/components/kpi-card";
@@ -11,8 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, Coins, ShieldCheck, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ConfirmDialog, ReasonDialog } from "@/components/flow";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { ColumnDef } from "@tanstack/react-table";
+
+const WD_REJECT_REASONS = ["بيانات الحساب غير صحيحة", "نشاط مشبوه", "رصيد غير كافٍ", "عدم توثيق الحساب", "أخرى"];
 
 export const Route = createFileRoute("/admin/financial")({ component: Financial });
 
@@ -24,6 +28,8 @@ function Financial() {
   const { data: wds, isLoading } = useWithdrawals();
   const { data: revenue } = useRevenue();
   const updateWd = useUpdateWithdrawalStatus();
+  const [approveTarget, setApproveTarget] = useState<Wd | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<Wd | null>(null);
 
   const columns: ColumnDef<Wd, unknown>[] = [
     { accessorKey: "id", header: "الرقم" },
@@ -36,14 +42,8 @@ function Financial() {
       if (w.status !== "pending") return <span className="text-xs text-muted-foreground">—</span>;
       return (
         <div className="flex gap-1">
-          <Button size="sm" variant="outline"
-            onClick={() => updateWd.mutate({ id: w.id, status: "approved" }, { onSuccess: () => toast.success("✅ تمت الموافقة على السحب") })}>
-            موافقة
-          </Button>
-          <Button size="sm" variant="ghost" className="text-destructive"
-            onClick={() => updateWd.mutate({ id: w.id, status: "rejected" }, { onSuccess: () => toast.error("تم رفض السحب") })}>
-            رفض
-          </Button>
+          <Button size="sm" variant="outline" onClick={() => setApproveTarget(w)}>موافقة</Button>
+          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => setRejectTarget(w)}>رفض</Button>
         </div>
       );
     }},
@@ -92,6 +92,24 @@ function Financial() {
           }
         />
       </div>
+
+      {approveTarget && (
+        <ConfirmDialog open={!!approveTarget} onOpenChange={(o) => !o && setApproveTarget(null)}
+          title={`الموافقة على سحب ${money(approveTarget.amount)}`}
+          description={`سيتم تحويل المبلغ إلى حساب ${approveTarget.user}.`}
+          confirmLabel="موافقة وتحويل"
+          onConfirm={async () => { await updateWd.mutateAsync({ id: approveTarget.id, status: "approved" }); toast.success("✅ تمت الموافقة على السحب"); setApproveTarget(null); }}
+        />
+      )}
+      {rejectTarget && (
+        <ReasonDialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}
+          title={`رفض سحب ${money(rejectTarget.amount)}`}
+          reasons={WD_REJECT_REASONS}
+          submitLabel="رفض" destructive
+          successTitle="تم رفض طلب السحب"
+          onSubmit={async ({ reason }) => { await updateWd.mutateAsync({ id: rejectTarget.id, status: "rejected" }); toast.error(`تم رفض السحب — ${reason}`); }}
+        />
+      )}
     </DashboardLayout>
   );
 }

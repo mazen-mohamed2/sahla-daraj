@@ -11,10 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import { Gavel, Check } from "lucide-react";
+import { MultiStepDialog, ReviewRow, ProcessingStep, SuccessStep, FailureStep, StepFooter, useMockProcess } from "@/components/flow";
 
 export const Route = createFileRoute("/agency/bids")({ component: Bids });
 
@@ -27,33 +26,50 @@ const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secon
   closed: { label: "مغلق", variant: "outline" },
 };
 
+const STEPS = [
+  { key: "price", label: "التفاصيل" },
+  { key: "terms", label: "الشروط" },
+  { key: "review", label: "المراجعة" },
+  { key: "done", label: "التأكيد" },
+];
+
 function Bids() {
   const money = useMoney();
   const { data, isLoading } = useImportRequests();
   const submitBid = useSubmitBid();
-  const [target, setTarget] = useState<{ id: string; car: { make: string; model: string } } | null>(null);
+  const [target, setTarget] = useState<{ id: string; car: { make: string; model: string }; budget: number } | null>(null);
   const [country, setCountry] = useState("all");
   const [submitted, setSubmitted] = useState<Set<string>>(new Set());
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState({ amount: "", delivery: DELIVERY[2], warranty: WARRANTY[2], notes: "" });
+  const [amtError, setAmtError] = useState<string | undefined>();
+  const proc = useMockProcess();
 
   const countries = Array.from(new Set(data?.map((r) => r.fromCountry) ?? []));
   const filtered = data?.filter((r) => country === "all" || r.fromCountry === country);
 
-  const doSubmit = () => {
+  const close = () => {
+    setTarget(null);
+    setTimeout(() => { setStep(0); setForm({ amount: "", delivery: DELIVERY[2], warranty: WARRANTY[2], notes: "" }); proc.reset(); setAmtError(undefined); }, 300);
+  };
+
+  const nextFromPrice = () => {
+    const amt = Number(form.amount);
+    if (!amt || amt < 1000) { setAmtError("أدخل مبلغاً 1,000 ج.م على الأقل"); return; }
+    setAmtError(undefined); setStep(1);
+  };
+
+  const confirm = async () => {
     if (!target) return;
-    const amount = Number(form.amount);
-    if (!amount || amount < 1000) { toast.error("أدخل مبلغاً صحيحاً"); return; }
-    submitBid.mutate(
-      { requestId: target.id, amount, notes: form.notes, tokenCost: TOKEN_COST, delivery: form.delivery, warranty: form.warranty },
-      {
-        onSuccess: () => {
-          toast.success("✅ تم إرسال عرضك، سيتم إشعار العميل");
-          setSubmitted((s) => new Set(s).add(target.id));
-          setTarget(null);
-          setForm({ amount: "", delivery: DELIVERY[2], warranty: WARRANTY[2], notes: "" });
-        },
-      },
-    );
+    setStep(3);
+    const ok = await proc.run(async () => {
+      await submitBid.mutateAsync({
+        requestId: target.id, amount: Number(form.amount), notes: form.notes,
+        tokenCost: TOKEN_COST, delivery: form.delivery, warranty: form.warranty,
+      });
+      setSubmitted((s) => new Set(s).add(target.id));
+    });
+    if (!ok) return;
   };
 
   return (
@@ -105,11 +121,27 @@ function Bids() {
           })}
       </div>
 
-      <Dialog open={!!target} onOpenChange={(o) => !o && setTarget(null)}>
-        <DialogContent dir="rtl">
-          <DialogHeader><DialogTitle>تقديم عرض</DialogTitle></DialogHeader>
+      <MultiStepDialog open={!!target} onOpenChange={(o) => !o && close()} title={target ? `عرض على ${target.car.make} ${target.car.model}` : ""} steps={STEPS} currentStep={Math.min(step, 3)} locked={proc.status === "processing"}>
+        {step === 0 && target && (
           <div className="space-y-3">
-            <div><Label>مبلغ العرض (ج.م)</Label><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
+            <div className="rounded-lg bg-muted/40 p-3 text-sm flex justify-between">
+              <span className="text-muted-foreground">ميزانية الطالب</span>
+              <span className="font-bold">{money(target.budget)}</span>
+            </div>
+            <div>
+              <Label>مبلغ العرض (ج.م)</Label>
+              <Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="0" />
+              {amtError && <p className="text-xs text-destructive mt-1">{amtError}</p>}
+            </div>
+            <div><Label>ملاحظات للعميل</Label><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="اذكر مواصفات، حالة، مصدر السيارة..." /></div>
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={close}>إلغاء</Button>
+              <Button className="flex-1" onClick={nextFromPrice}>متابعة</Button>
+            </StepFooter>
+          </div>
+        )}
+        {step === 1 && (
+          <div className="space-y-3">
             <div>
               <Label>مدة التوريد</Label>
               <Select value={form.delivery} onValueChange={(v) => setForm({ ...form, delivery: v })}>
@@ -124,14 +156,34 @@ function Bids() {
                 <SelectContent>{WARRANTY.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div><Label>ملاحظات</Label><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(0)}>رجوع</Button>
+              <Button className="flex-1" onClick={() => setStep(2)}>متابعة</Button>
+            </StepFooter>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTarget(null)}>إلغاء</Button>
-            <Button onClick={doSubmit} disabled={submitBid.isPending}>إرسال العرض (سيخصم {TOKEN_COST} توكن)</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        )}
+        {step === 2 && target && (
+          <div>
+            <div className="rounded-lg border p-3">
+              <ReviewRow label="السيارة" value={`${target.car.make} ${target.car.model}`} />
+              <ReviewRow label="السعر المعروض" value={money(Number(form.amount))} emphasis />
+              <ReviewRow label="مدة التوريد" value={form.delivery} />
+              <ReviewRow label="الضمان" value={form.warranty} />
+              <ReviewRow label="تكلفة تقديم العرض" value={`${TOKEN_COST} توكن`} />
+            </div>
+            {form.notes && <div className="mt-3 rounded-lg border p-3 text-sm"><div className="text-xs text-muted-foreground mb-1">ملاحظات</div>{form.notes}</div>}
+            <StepFooter>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>رجوع</Button>
+              <Button className="flex-1" onClick={confirm}>إرسال العرض</Button>
+            </StepFooter>
+          </div>
+        )}
+        {step === 3 && proc.status === "processing" && <ProcessingStep message="جارٍ إرسال العرض وخصم الرصيد..." />}
+        {step === 3 && proc.status === "success" && (
+          <SuccessStep title="تم إرسال العرض" message={<>سيتم إشعار العميل. تم خصم <strong>{TOKEN_COST}</strong> توكن.</>} onPrimary={close} />
+        )}
+        {step === 3 && proc.status === "error" && <FailureStep message={proc.error ?? undefined} onRetry={confirm} onCancel={close} />}
+      </MultiStepDialog>
     </DashboardLayout>
   );
 }

@@ -16,11 +16,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, Ban, CheckCircle2, Eye, UserPlus, Download, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { ConfirmDialog, ReasonDialog } from "@/components/flow";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/admin/users")({ component: UsersPage });
 
 const CITIES = ["القاهرة","الجيزة","الإسكندرية","الأقصر","أسوان","المنصورة","طنطا","الزقازيق","الإسماعيلية","بورسعيد"];
+const BAN_REASONS = ["نشاط احتيالي مشتبه به", "انتهاك شروط الاستخدام", "إعلانات مزيفة", "تعليقات مسيئة", "أخرى"];
 
 type User = { id: string; name: string; phone: string; role: string; status: string; verified: boolean; joinedAt: string };
 
@@ -31,6 +33,9 @@ function UsersPage() {
 
   const [addOpen, setAddOpen] = useState(false);
   const [detail, setDetail] = useState<User | null>(null);
+  const [verifyTarget, setVerifyTarget] = useState<User | null>(null);
+  const [unbanTarget, setUnbanTarget] = useState<User | null>(null);
+  const [banTarget, setBanTarget] = useState<User | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", role: "user", city: "القاهرة" });
 
   const roleLabel: Record<string, string> = { admin: "مدير", agency: "معرض", user: "مستخدم" };
@@ -48,6 +53,7 @@ function UsersPage() {
       },
     );
   };
+
 
   const columns: ColumnDef<User, unknown>[] = [
     { accessorKey: "name", header: "الاسم", cell: ({ row }) => (
@@ -69,16 +75,16 @@ function UsersPage() {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => setDetail(u)}><Eye className="ml-2 size-4" /> عرض التفاصيل</DropdownMenuItem>
             {!u.verified && (
-              <DropdownMenuItem onClick={() => updateStatus.mutate({ id: u.id, verified: true }, { onSuccess: () => toast.success(`✅ تم توثيق ${u.name}`) })}>
+              <DropdownMenuItem onClick={() => setVerifyTarget(u)}>
                 <CheckCircle2 className="ml-2 size-4" /> توثيق
               </DropdownMenuItem>
             )}
             {isBanned ? (
-              <DropdownMenuItem onClick={() => updateStatus.mutate({ id: u.id, status: "active" }, { onSuccess: () => toast.success(`✅ تم رفع الحظر عن ${u.name}`) })}>
+              <DropdownMenuItem onClick={() => setUnbanTarget(u)}>
                 <Unlock className="ml-2 size-4" /> رفع الحظر
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem className="text-destructive" onClick={() => updateStatus.mutate({ id: u.id, status: "banned" }, { onSuccess: () => toast.warning(`🚫 تم حظر ${u.name}`) })}>
+              <DropdownMenuItem className="text-destructive" onClick={() => setBanTarget(u)}>
                 <Ban className="ml-2 size-4" /> حظر
               </DropdownMenuItem>
             )}
@@ -164,6 +170,33 @@ function UsersPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      {verifyTarget && (
+        <ConfirmDialog open={!!verifyTarget} onOpenChange={(o) => !o && setVerifyTarget(null)}
+          title={`توثيق ${verifyTarget.name}`}
+          description="سيظهر بجانب اسم المستخدم شارة التوثيق، وسيكتسب صلاحيات أعلى في التداول."
+          confirmLabel="تأكيد التوثيق"
+          onConfirm={async () => { await updateStatus.mutateAsync({ id: verifyTarget.id, verified: true }); toast.success(`✅ تم توثيق ${verifyTarget.name}`); setVerifyTarget(null); }}
+        />
+      )}
+      {unbanTarget && (
+        <ConfirmDialog open={!!unbanTarget} onOpenChange={(o) => !o && setUnbanTarget(null)}
+          title={`رفع الحظر عن ${unbanTarget.name}`}
+          description="سيستعيد المستخدم إمكانية الدخول ونشر الإعلانات."
+          confirmLabel="رفع الحظر"
+          onConfirm={async () => { await updateStatus.mutateAsync({ id: unbanTarget.id, status: "active" }); toast.success(`تم رفع الحظر عن ${unbanTarget.name}`); setUnbanTarget(null); }}
+        />
+      )}
+      {banTarget && (
+        <ReasonDialog open={!!banTarget} onOpenChange={(o) => !o && setBanTarget(null)}
+          title={`حظر ${banTarget.name}`}
+          reasons={BAN_REASONS}
+          submitLabel="حظر" destructive
+          successTitle="تم حظر المستخدم"
+          successMessage={`لم يعد ${banTarget.name} قادراً على استخدام المنصة.`}
+          onSubmit={async ({ reason }) => { await updateStatus.mutateAsync({ id: banTarget.id, status: "banned" }); toast.warning(`🚫 تم حظر ${banTarget.name} — ${reason}`); }}
+        />
+      )}
     </DashboardLayout>
   );
 }
