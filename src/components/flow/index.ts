@@ -5,3 +5,5 @@ export * from "./payment-method-picker";
 export * from "./amount-input";
 export * from "./confirm-dialog";
 export * from "./reason-dialog";
+export * from "./deposit-dialog";
+export * from "./withdraw-dialog";
