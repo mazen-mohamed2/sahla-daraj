@@ -7,3 +7,4 @@ export * from "./confirm-dialog";
 export * from "./reason-dialog";
 export * from "./deposit-dialog";
 export * from "./withdraw-dialog";
+export * from "./boost-dialog";
