@@ -27,6 +27,7 @@ import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as UserChatRouteImport } from './routes/user.chat'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
+import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
 import { Route as AgencyChatRouteImport } from './routes/agency.chat'
 import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
@@ -129,6 +130,11 @@ const AgencyTokensRoute = AgencyTokensRouteImport.update({
   path: '/tokens',
   getParentRoute: () => AgencyRoute,
 } as any)
+const AgencyListingsRoute = AgencyListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => AgencyRoute,
+} as any)
 const AgencyInventoryRoute = AgencyInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/listings': typeof AgencyListingsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByTo {
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/listings': typeof AgencyListingsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
+  '/agency/listings': typeof AgencyListingsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/agency/bids'
     | '/agency/chat'
     | '/agency/inventory'
+    | '/agency/listings'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/agency/bids'
     | '/agency/chat'
     | '/agency/inventory'
+    | '/agency/listings'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/agency/bids'
     | '/agency/chat'
     | '/agency/inventory'
+    | '/agency/listings'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -505,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyTokensRouteImport
       parentRoute: typeof AgencyRoute
     }
+    '/agency/listings': {
+      id: '/agency/listings'
+      path: '/listings'
+      fullPath: '/agency/listings'
+      preLoaderRoute: typeof AgencyListingsRouteImport
+      parentRoute: typeof AgencyRoute
+    }
     '/agency/inventory': {
       id: '/agency/inventory'
       path: '/inventory'
@@ -612,6 +631,7 @@ interface AgencyRouteChildren {
   AgencyBidsRoute: typeof AgencyBidsRoute
   AgencyChatRoute: typeof AgencyChatRoute
   AgencyInventoryRoute: typeof AgencyInventoryRoute
+  AgencyListingsRoute: typeof AgencyListingsRoute
   AgencyTokensRoute: typeof AgencyTokensRoute
   AgencyIndexRoute: typeof AgencyIndexRoute
 }
@@ -621,6 +641,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyBidsRoute: AgencyBidsRoute,
   AgencyChatRoute: AgencyChatRoute,
   AgencyInventoryRoute: AgencyInventoryRoute,
+  AgencyListingsRoute: AgencyListingsRoute,
   AgencyTokensRoute: AgencyTokensRoute,
   AgencyIndexRoute: AgencyIndexRoute,
 }

@@ -24,7 +24,7 @@ const cities = [
   "المنصورة","طنطا","الزقازيق","الإسماعيلية","بورسعيد",
 ];
 
-const statuses = ["active","pending","sold","banned"] as const;
+const statuses = ["active","pending","sold","banned"] as string[];
 
 function pick<T>(arr: readonly T[], i: number) { return arr[i % arr.length]; }
 function rand(seed: number) { return ((seed * 9301 + 49297) % 233280) / 233280; }
@@ -83,7 +83,8 @@ export const mockDisputes = Array.from({ length: 12 }).map((_, i) => ({
   seller: pick(egyptianNames, i + 3),
   amount: 100000 + Math.floor(rand(i) * 1500000),
   reason: ["عدم مطابقة الوصف","تأخر التسليم","حالة السيارة","نزاع على السعر"][i % 4],
-  status: (["open","in_review","escalated","open"] as const)[i % 4],
+  status: (["open","in_review","escalated","resolved"] as const)[i % 4] as "open" | "in_review" | "escalated" | "resolved",
+  note: "" as string,
   openedAt: new Date(2025, 6, (i % 20) + 1).toISOString(),
 }));
 
@@ -94,6 +95,7 @@ export const mockAgencyApplications = Array.from({ length: 8 }).map((_, i) => ({
   phone: egPhone(i, 500),
   city: pick(cities, i),
   vehicles: 5 + i * 3,
+  status: (["pending","approved","rejected"] as const)[i % 3] as "pending" | "approved" | "rejected",
   submittedAt: new Date(2025, 6, i + 1).toISOString(),
 }));
 
@@ -154,7 +156,8 @@ export const mockEscrows = Array.from({ length: 6 }).map((_, i) => ({
   listing: `${pick(carMakes, i).make} ${pick(carMakes, i).model}`,
   counterparty: pick(egyptianNames, i + 1),
   amount: 300000 + i * 125000,
-  status: (["holding","released","disputed","holding"] as const)[i % 4],
+  status: (["holding","holding","released","disputed","holding","refunded"] as const)[i % 6] as "holding" | "released" | "disputed" | "refunded",
+  reason: "" as string,
   createdAt: new Date(2025, 6, i + 2).toISOString(),
 }));
 

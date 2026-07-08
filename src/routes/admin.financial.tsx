@@ -3,11 +3,12 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { KpiCard } from "@/components/kpi-card";
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
-import { useKPIs, useWithdrawals, useRevenue } from "@/hooks/queries";
+import { useKPIs, useWithdrawals, useRevenue, useUpdateWithdrawalStatus } from "@/hooks/queries";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
+import { exportCSV } from "@/lib/csv";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, Coins, ShieldCheck } from "lucide-react";
+import { Wallet, Coins, ShieldCheck, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -22,6 +23,7 @@ function Financial() {
   const { data: kpi } = useKPIs();
   const { data: wds, isLoading } = useWithdrawals();
   const { data: revenue } = useRevenue();
+  const updateWd = useUpdateWithdrawalStatus();
 
   const columns: ColumnDef<Wd, unknown>[] = [
     { accessorKey: "id", header: "الرقم" },
@@ -29,12 +31,22 @@ function Financial() {
     { accessorKey: "amount", header: "المبلغ", cell: ({ row }) => <span className="font-semibold">{money(row.original.amount)}</span> },
     { accessorKey: "status", header: "الحالة", cell: ({ row }) => <StatusBadge status={row.original.status} /> },
     { accessorKey: "requestedAt", header: "التاريخ", cell: ({ row }) => formatDate(row.original.requestedAt) },
-    { id: "actions", header: "", cell: () => (
-      <div className="flex gap-1">
-        <Button size="sm" variant="outline" onClick={() => toast.success("تمت الموافقة")}>موافقة</Button>
-        <Button size="sm" variant="ghost" className="text-destructive" onClick={() => toast.error("تم الرفض")}>رفض</Button>
-      </div>
-    )},
+    { id: "actions", header: "", enableSorting: false, cell: ({ row }) => {
+      const w = row.original;
+      if (w.status !== "pending") return <span className="text-xs text-muted-foreground">—</span>;
+      return (
+        <div className="flex gap-1">
+          <Button size="sm" variant="outline"
+            onClick={() => updateWd.mutate({ id: w.id, status: "approved" }, { onSuccess: () => toast.success("✅ تمت الموافقة على السحب") })}>
+            موافقة
+          </Button>
+          <Button size="sm" variant="ghost" className="text-destructive"
+            onClick={() => updateWd.mutate({ id: w.id, status: "rejected" }, { onSuccess: () => toast.error("تم رفض السحب") })}>
+            رفض
+          </Button>
+        </div>
+      );
+    }},
   ];
 
   return (
@@ -64,7 +76,21 @@ function Financial() {
 
       <div className="mt-6">
         <h2 className="mb-3 font-display text-lg font-bold">طلبات السحب</h2>
-        <DataTable columns={columns} data={wds} isLoading={isLoading} />
+        <DataTable
+          columns={columns}
+          data={wds}
+          isLoading={isLoading}
+          statusOptions={[
+            { value: "pending", label: "معلق" },
+            { value: "approved", label: "موافق عليه" },
+            { value: "rejected", label: "مرفوض" },
+          ]}
+          toolbar={
+            <Button size="sm" variant="outline" onClick={() => wds && exportCSV(wds, "withdrawals")}>
+              <Download className="ml-1 size-4" /> تصدير
+            </Button>
+          }
+        />
       </div>
     </DashboardLayout>
   );
