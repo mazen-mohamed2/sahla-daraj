@@ -92,6 +92,24 @@ function Financial() {
           }
         />
       </div>
+
+      {approveTarget && (
+        <ConfirmDialog open={!!approveTarget} onOpenChange={(o) => !o && setApproveTarget(null)}
+          title={`الموافقة على سحب ${money(approveTarget.amount)}`}
+          description={`سيتم تحويل المبلغ إلى حساب ${approveTarget.user}.`}
+          confirmLabel="موافقة وتحويل"
+          onConfirm={async () => { await updateWd.mutateAsync({ id: approveTarget.id, status: "approved" }); toast.success("✅ تمت الموافقة على السحب"); setApproveTarget(null); }}
+        />
+      )}
+      {rejectTarget && (
+        <ReasonDialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}
+          title={`رفض سحب ${money(rejectTarget.amount)}`}
+          reasons={WD_REJECT_REASONS}
+          submitLabel="رفض" destructive
+          successTitle="تم رفض طلب السحب"
+          onSubmit={async ({ reason }) => { await updateWd.mutateAsync({ id: rejectTarget.id, status: "rejected" }); toast.error(`تم رفض السحب — ${reason}`); }}
+        />
+      )}
     </DashboardLayout>
   );
 }
