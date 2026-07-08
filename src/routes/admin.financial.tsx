@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { KpiCard } from "@/components/kpi-card";
@@ -11,8 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, Coins, ShieldCheck, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ConfirmDialog, ReasonDialog } from "@/components/flow";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { ColumnDef } from "@tanstack/react-table";
+
+const WD_REJECT_REASONS = ["بيانات الحساب غير صحيحة", "نشاط مشبوه", "رصيد غير كافٍ", "عدم توثيق الحساب", "أخرى"];
 
 export const Route = createFileRoute("/admin/financial")({ component: Financial });
 
