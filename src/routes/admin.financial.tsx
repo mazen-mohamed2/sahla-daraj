@@ -28,6 +28,8 @@ function Financial() {
   const { data: wds, isLoading } = useWithdrawals();
   const { data: revenue } = useRevenue();
   const updateWd = useUpdateWithdrawalStatus();
+  const [approveTarget, setApproveTarget] = useState<Wd | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<Wd | null>(null);
 
   const columns: ColumnDef<Wd, unknown>[] = [
     { accessorKey: "id", header: "الرقم" },
