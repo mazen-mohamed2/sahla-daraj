@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowDownToLine, ArrowUpFromLine, Wallet, ArrowDown, ArrowUp } from "lucide-react";
 import { useWalletTx } from "@/hooks/queries";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -15,6 +16,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 function WalletPage() {
+  const money = useMoney();
   const { data, isLoading } = useWalletTx();
 
   return (
@@ -23,7 +25,7 @@ function WalletPage() {
         <CardContent className="p-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-sm opacity-90"><Wallet className="size-4" /> رصيدك المتاح</div>
-            <div className="mt-1 font-display text-5xl font-black">{formatSAR(45300)}</div>
+            <div className="mt-1 font-display text-5xl font-black">{money(45300)}</div>
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={() => toast.success("سيتم توجيهك للدفع")}>
@@ -54,7 +56,7 @@ function WalletPage() {
                     </div>
                   </div>
                   <div className={`font-bold ${positive ? "text-success" : "text-destructive"}`}>
-                    {positive ? "+" : "-"} {formatSAR(t.amount)}
+                    {positive ? "+" : "-"} {money(t.amount)}
                   </div>
                 </div>
               );

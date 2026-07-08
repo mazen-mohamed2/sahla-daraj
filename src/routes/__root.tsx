@@ -81,15 +81,16 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const theme = useUIStore((s) => s.theme);
+  const lang = useUIStore((s) => s.lang);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.setAttribute("dir", "rtl");
-    document.documentElement.setAttribute("lang", "ar");
-  }, [theme]);
+    document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+  }, [theme, lang]);
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      <Toaster richColors position="top-center" dir="rtl" />
+      <Toaster richColors position="top-center" dir={lang === "ar" ? "rtl" : "ltr"} />
     </QueryClientProvider>
   );
 }

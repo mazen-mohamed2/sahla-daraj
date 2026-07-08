@@ -2,6 +2,16 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { FLAGS } from "@/lib/flags";
 
 export const Route = createFileRoute("/agency")({
-  beforeLoad: () => { if (!FLAGS.B2C) throw redirect({ to: "/admin" }); },
+  beforeLoad: () => {
+    if (!FLAGS.B2C) throw redirect({ to: "/admin" });
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem("cm-auth");
+      const loggedIn = raw ? !!JSON.parse(raw)?.state?.isLoggedIn : false;
+      if (!loggedIn) throw redirect({ to: "/login" });
+    } catch (e) {
+      if (e && typeof e === "object" && "to" in e) throw e;
+    }
+  },
   component: () => <Outlet />,
 });

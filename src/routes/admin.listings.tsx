@@ -4,7 +4,8 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
 import { usePendingListings, useListings } from "@/hooks/queries";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Check, X, Eye } from "lucide-react";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/admin/listings")({ component: ListingsRev
 type Listing = { id: string; title: string; seller: string; price: number; city: string; status: string; createdAt: string; image: string };
 
 function ListingsReview() {
+  const money = useMoney();
   const { data: pending, isLoading } = usePendingListings();
   const { data: all } = useListings();
   const [preview, setPreview] = useState<Listing | null>(null);
@@ -32,7 +34,7 @@ function ListingsReview() {
       </div>
     )},
     { accessorKey: "seller", header: "البائع" },
-    { accessorKey: "price", header: "السعر", cell: ({ row }) => <span className="font-semibold">{formatSAR(row.original.price)}</span> },
+    { accessorKey: "price", header: "السعر", cell: ({ row }) => <span className="font-semibold">{money(row.original.price)}</span> },
     { accessorKey: "city", header: "المدينة" },
     { accessorKey: "status", header: "الحالة", cell: ({ row }) => <StatusBadge status={row.original.status} /> },
     { accessorKey: "createdAt", header: "التاريخ", cell: ({ row }) => formatDate(row.original.createdAt) },
@@ -57,7 +59,7 @@ function ListingsReview() {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div><span className="text-muted-foreground">البائع: </span>{preview.seller}</div>
                 <div><span className="text-muted-foreground">المدينة: </span>{preview.city}</div>
-                <div><span className="text-muted-foreground">السعر: </span>{formatSAR(preview.price)}</div>
+                <div><span className="text-muted-foreground">السعر: </span>{money(preview.price)}</div>
                 <div><span className="text-muted-foreground">التاريخ: </span>{formatDate(preview.createdAt)}</div>
               </div>
               <div className="flex gap-2">

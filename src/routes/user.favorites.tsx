@@ -4,13 +4,14 @@ import { useListings } from "@/hooks/queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin } from "lucide-react";
-import { formatSAR } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/user/favorites")({ component: Favs });
 
 function Favs() {
+  const money = useMoney();
   const { data, isLoading } = useListings();
   const favs = data?.slice(0, 8);
 
@@ -29,7 +30,7 @@ function Favs() {
               <CardContent className="p-4 space-y-2">
                 <div className="font-semibold truncate">{l.title}</div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="size-3" /> {l.city}</div>
-                <div className="font-display text-lg font-bold text-primary">{formatSAR(l.price)}</div>
+                <div className="font-display text-lg font-bold text-primary">{money(l.price)}</div>
               </CardContent>
             </Card>
           ))}

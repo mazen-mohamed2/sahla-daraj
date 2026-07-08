@@ -4,12 +4,13 @@ import { KpiCard } from "@/components/kpi-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Wallet, ShieldCheck, Heart, Plus } from "lucide-react";
-import { formatSAR } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { useEscrows, useListings } from "@/hooks/queries";
 
 export const Route = createFileRoute("/user/")({ component: UserOverview });
 
 function UserOverview() {
+  const money = useMoney();
   const { data: listings } = useListings();
   const { data: escrows } = useEscrows();
 
@@ -17,7 +18,7 @@ function UserOverview() {
     <DashboardLayout title="نظرة عامة">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="إعلاناتي" value={(listings?.length ?? 0).toString()} icon={Car} tone="primary" />
-        <KpiCard title="رصيد المحفظة" value={formatSAR(45300)} icon={Wallet} tone="success" />
+        <KpiCard title="رصيد المحفظة" value={money(45300)} icon={Wallet} tone="success" />
         <KpiCard title="الضمانات النشطة" value={(escrows?.length ?? 0).toString()} icon={ShieldCheck} tone="warning" />
         <KpiCard title="المفضلة" value="12" icon={Heart} tone="destructive" />
       </div>

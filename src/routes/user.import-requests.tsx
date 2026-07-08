@@ -4,13 +4,15 @@ import { useImportRequests } from "@/hooks/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Plus, Ship } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/user/import-requests")({ component: ImportRequests });
 
 function ImportRequests() {
+  const money = useMoney();
   const { data, isLoading } = useImportRequests();
   const mine = data?.slice(0, 4);
 
@@ -31,7 +33,7 @@ function ImportRequests() {
                 <StatusBadge status={r.status} />
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">الميزانية</span><span className="font-bold">{formatSAR(r.budget)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">الميزانية</span><span className="font-bold">{money(r.budget)}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">التاريخ</span><span>{formatDate(r.createdAt)}</span></div>
                 <Button variant="outline" size="sm" className="w-full mt-2">عرض العروض المقدمة</Button>
               </CardContent>

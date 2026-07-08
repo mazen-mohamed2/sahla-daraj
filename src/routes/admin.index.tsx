@@ -3,7 +3,8 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { KpiCard } from "@/components/kpi-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useKPIs, useRevenue, useTransactions } from "@/hooks/queries";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Wallet, Car, ShieldCheck, Users } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,7 @@ import { StatusBadge } from "@/components/status-badge";
 export const Route = createFileRoute("/admin/")({ component: AdminOverview });
 
 function AdminOverview() {
+  const money = useMoney();
   const { data: kpi, isLoading } = useKPIs();
   const { data: revenue } = useRevenue();
   const { data: txs, isLoading: txLoading } = useTransactions();
@@ -23,7 +25,7 @@ function AdminOverview() {
           Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)
         ) : (
           <>
-            <KpiCard title="إجمالي الإيرادات" value={formatSAR(kpi.totalRevenue)} icon={Wallet} change="+12.4% هذا الشهر" tone="success" />
+            <KpiCard title="إجمالي الإيرادات" value={money(kpi.totalRevenue)} icon={Wallet} change="+12.4% هذا الشهر" tone="success" />
             <KpiCard title="الإعلانات النشطة" value={kpi.activeListings.toLocaleString("ar-SA")} icon={Car} tone="primary" />
             <KpiCard title="الضمانات المعلقة" value={kpi.pendingEscrows.toLocaleString("ar-SA")} icon={ShieldCheck} tone="warning" />
             <KpiCard title="المستخدمون النشطون" value={kpi.activeUsers.toLocaleString("ar-SA")} icon={Users} tone="primary" />
@@ -66,7 +68,7 @@ function AdminOverview() {
                     <div className="text-xs text-muted-foreground">{formatDate(t.createdAt)}</div>
                   </div>
                   <div className="text-left shrink-0">
-                    <div className="text-sm font-bold">{formatSAR(t.amount)}</div>
+                    <div className="text-sm font-bold">{money(t.amount)}</div>
                     <StatusBadge status={t.status} />
                   </div>
                 </div>
