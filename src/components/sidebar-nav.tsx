@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Car, Scale, Wallet, Building2, PackageCheck,
   Coins, MessagesSquare, Heart, ShoppingCart, PlusSquare, Ship,
-  UserCircle, Settings, type LucideIcon,
+  UserCircle, Settings, FileText, type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { useUIStore } from "@/store/ui";
@@ -24,6 +24,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
   agency: [
     { to: "/agency", label: "nav.overview", icon: LayoutDashboard, exact: true },
     { to: "/agency/inventory", label: "nav.inventory", icon: Car },
+    { to: "/agency/listings", label: "nav.myListings", icon: FileText },
     { to: "/agency/add-listing", label: "nav.addListing", icon: PlusSquare },
     { to: "/agency/tokens", label: "nav.tokens", icon: Coins },
     { to: "/agency/bids", label: "nav.bids", icon: PackageCheck },
