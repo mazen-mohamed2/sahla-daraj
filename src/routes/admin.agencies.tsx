@@ -52,7 +52,7 @@ function Agencies() {
       if (a.status !== "pending") return <span className="text-xs text-muted-foreground">—</span>;
       return (
         <div className="flex gap-1">
-          <Button size="sm" onClick={() => handleApprove(a)}><Check className="ml-1 size-4" /> اعتماد</Button>
+          <Button size="sm" onClick={() => setApproveTarget(a)}><Check className="ml-1 size-4" /> اعتماد</Button>
           <Button size="sm" variant="outline" className="text-destructive" onClick={() => setRejectTarget(a)}><X className="ml-1 size-4" /> رفض</Button>
         </div>
       );
@@ -77,16 +77,23 @@ function Agencies() {
         ]}
       />
 
-      <Dialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}>
-        <DialogContent dir="rtl">
-          <DialogHeader><DialogTitle>رفض المعرض</DialogTitle></DialogHeader>
-          <div><Label>سبب الرفض</Label><Textarea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} /></div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectTarget(null)}>إلغاء</Button>
-            <Button variant="destructive" onClick={handleReject}>تأكيد الرفض</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {approveTarget && (
+        <ConfirmDialog open={!!approveTarget} onOpenChange={(o) => !o && setApproveTarget(null)}
+          title={`اعتماد ${approveTarget.name}`}
+          description="سيصبح المعرض قادراً على نشر إعلاناته والتفاعل مع المشترين."
+          confirmLabel="اعتماد"
+          onConfirm={async () => { await updateStatus.mutateAsync({ id: approveTarget.id, status: "approved" }); toast.success(`✅ تم اعتماد ${approveTarget.name}`); setApproveTarget(null); }}
+        />
+      )}
+      {rejectTarget && (
+        <ReasonDialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}
+          title={`رفض ${rejectTarget.name}`}
+          reasons={REJECT_REASONS}
+          submitLabel="رفض الطلب" destructive
+          successTitle="تم رفض الطلب"
+          onSubmit={async ({ reason }) => { await updateStatus.mutateAsync({ id: rejectTarget.id, status: "rejected", reason }); toast.error(`تم رفض ${rejectTarget.name}`); }}
+        />
+      )}
 
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent dir="rtl">
