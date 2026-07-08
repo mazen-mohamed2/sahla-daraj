@@ -24,7 +24,7 @@ const cities = [
   "المنصورة","طنطا","الزقازيق","الإسماعيلية","بورسعيد",
 ];
 
-const statuses = ["active","pending","sold","banned"] as const;
+const statuses = ["active","pending","sold","banned"] as string[];
 
 function pick<T>(arr: readonly T[], i: number) { return arr[i % arr.length]; }
 function rand(seed: number) { return ((seed * 9301 + 49297) % 233280) / 233280; }
