@@ -83,7 +83,8 @@ export const mockDisputes = Array.from({ length: 12 }).map((_, i) => ({
   seller: pick(egyptianNames, i + 3),
   amount: 100000 + Math.floor(rand(i) * 1500000),
   reason: ["عدم مطابقة الوصف","تأخر التسليم","حالة السيارة","نزاع على السعر"][i % 4],
-  status: (["open","in_review","escalated","open"] as const)[i % 4],
+  status: (["open","in_review","escalated","resolved"] as const)[i % 4] as "open" | "in_review" | "escalated" | "resolved",
+  note: "" as string,
   openedAt: new Date(2025, 6, (i % 20) + 1).toISOString(),
 }));
 
@@ -94,6 +95,7 @@ export const mockAgencyApplications = Array.from({ length: 8 }).map((_, i) => ({
   phone: egPhone(i, 500),
   city: pick(cities, i),
   vehicles: 5 + i * 3,
+  status: (["pending","approved","rejected"] as const)[i % 3] as "pending" | "approved" | "rejected",
   submittedAt: new Date(2025, 6, i + 1).toISOString(),
 }));
 
