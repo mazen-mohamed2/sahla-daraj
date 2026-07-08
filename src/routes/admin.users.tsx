@@ -170,6 +170,33 @@ function UsersPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      {verifyTarget && (
+        <ConfirmDialog open={!!verifyTarget} onOpenChange={(o) => !o && setVerifyTarget(null)}
+          title={`توثيق ${verifyTarget.name}`}
+          description="سيظهر بجانب اسم المستخدم شارة التوثيق، وسيكتسب صلاحيات أعلى في التداول."
+          confirmLabel="تأكيد التوثيق"
+          onConfirm={async () => { await updateStatus.mutateAsync({ id: verifyTarget.id, verified: true }); toast.success(`✅ تم توثيق ${verifyTarget.name}`); setVerifyTarget(null); }}
+        />
+      )}
+      {unbanTarget && (
+        <ConfirmDialog open={!!unbanTarget} onOpenChange={(o) => !o && setUnbanTarget(null)}
+          title={`رفع الحظر عن ${unbanTarget.name}`}
+          description="سيستعيد المستخدم إمكانية الدخول ونشر الإعلانات."
+          confirmLabel="رفع الحظر"
+          onConfirm={async () => { await updateStatus.mutateAsync({ id: unbanTarget.id, status: "active" }); toast.success(`تم رفع الحظر عن ${unbanTarget.name}`); setUnbanTarget(null); }}
+        />
+      )}
+      {banTarget && (
+        <ReasonDialog open={!!banTarget} onOpenChange={(o) => !o && setBanTarget(null)}
+          title={`حظر ${banTarget.name}`}
+          reasons={BAN_REASONS}
+          submitLabel="حظر" destructive
+          successTitle="تم حظر المستخدم"
+          successMessage={`لم يعد ${banTarget.name} قادراً على استخدام المنصة.`}
+          onSubmit={async ({ reason }) => { await updateStatus.mutateAsync({ id: banTarget.id, status: "banned" }); toast.warning(`🚫 تم حظر ${banTarget.name} — ${reason}`); }}
+        />
+      )}
     </DashboardLayout>
   );
 }
