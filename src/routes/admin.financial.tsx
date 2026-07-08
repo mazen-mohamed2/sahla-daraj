@@ -42,14 +42,8 @@ function Financial() {
       if (w.status !== "pending") return <span className="text-xs text-muted-foreground">—</span>;
       return (
         <div className="flex gap-1">
-          <Button size="sm" variant="outline"
-            onClick={() => updateWd.mutate({ id: w.id, status: "approved" }, { onSuccess: () => toast.success("✅ تمت الموافقة على السحب") })}>
-            موافقة
-          </Button>
-          <Button size="sm" variant="ghost" className="text-destructive"
-            onClick={() => updateWd.mutate({ id: w.id, status: "rejected" }, { onSuccess: () => toast.error("تم رفض السحب") })}>
-            رفض
-          </Button>
+          <Button size="sm" variant="outline" onClick={() => setApproveTarget(w)}>موافقة</Button>
+          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => setRejectTarget(w)}>رفض</Button>
         </div>
       );
     }},
