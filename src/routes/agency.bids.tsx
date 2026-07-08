@@ -4,7 +4,8 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { useImportRequests } from "@/hooks/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/status-badge";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import { Gavel } from "lucide-react";
 export const Route = createFileRoute("/agency/bids")({ component: Bids });
 
 function Bids() {
+  const money = useMoney();
   const { data, isLoading } = useImportRequests();
   const [target, setTarget] = useState<null | { id: string }>(null);
   const [bid, setBid] = useState("");
@@ -36,7 +38,7 @@ function Bids() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">الميزانية</span>
-                  <span className="font-bold">{formatSAR(r.budget)}</span>
+                  <span className="font-bold">{money(r.budget)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">التاريخ</span><span>{formatDate(r.createdAt)}</span>

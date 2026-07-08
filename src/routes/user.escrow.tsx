@@ -4,7 +4,8 @@ import { useEscrows } from "@/hooks/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { ShieldCheck, AlertTriangle } from "lucide-react";
@@ -12,6 +13,7 @@ import { ShieldCheck, AlertTriangle } from "lucide-react";
 export const Route = createFileRoute("/user/escrow")({ component: EscrowPage });
 
 function EscrowPage() {
+  const money = useMoney();
   const { data, isLoading } = useEscrows();
 
   return (
@@ -30,7 +32,7 @@ function EscrowPage() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between border-b pb-2 text-sm">
                   <span className="text-muted-foreground">المبلغ المحجوز</span>
-                  <span className="font-bold text-lg">{formatSAR(e.amount)}</span>
+                  <span className="font-bold text-lg">{money(e.amount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">تاريخ الإنشاء</span><span>{formatDate(e.createdAt)}</span>

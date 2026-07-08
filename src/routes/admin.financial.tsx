@@ -4,7 +4,8 @@ import { KpiCard } from "@/components/kpi-card";
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
 import { useKPIs, useWithdrawals, useRevenue } from "@/hooks/queries";
-import { formatSAR, formatDate } from "@/services/mock-data";
+import { formatDate } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, Coins, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/admin/financial")({ component: Financial 
 type Wd = { id: string; user: string; amount: number; status: string; requestedAt: string };
 
 function Financial() {
+  const money = useMoney();
   const { data: kpi } = useKPIs();
   const { data: wds, isLoading } = useWithdrawals();
   const { data: revenue } = useRevenue();
@@ -24,7 +26,7 @@ function Financial() {
   const columns: ColumnDef<Wd, unknown>[] = [
     { accessorKey: "id", header: "الرقم" },
     { accessorKey: "user", header: "المستخدم" },
-    { accessorKey: "amount", header: "المبلغ", cell: ({ row }) => <span className="font-semibold">{formatSAR(row.original.amount)}</span> },
+    { accessorKey: "amount", header: "المبلغ", cell: ({ row }) => <span className="font-semibold">{money(row.original.amount)}</span> },
     { accessorKey: "status", header: "الحالة", cell: ({ row }) => <StatusBadge status={row.original.status} /> },
     { accessorKey: "requestedAt", header: "التاريخ", cell: ({ row }) => formatDate(row.original.requestedAt) },
     { id: "actions", header: "", cell: () => (
@@ -38,9 +40,9 @@ function Financial() {
   return (
     <DashboardLayout title="النظرة المالية">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <KpiCard title="رصيد الضمان" value={kpi ? formatSAR(kpi.escrowBalance) : "..."} icon={ShieldCheck} tone="warning" />
-        <KpiCard title="رسوم المنصة" value={kpi ? formatSAR(kpi.platformFees) : "..."} icon={Coins} tone="success" />
-        <KpiCard title="إجمالي الإيرادات" value={kpi ? formatSAR(kpi.totalRevenue) : "..."} icon={Wallet} tone="primary" />
+        <KpiCard title="رصيد الضمان" value={kpi ? money(kpi.escrowBalance) : "..."} icon={ShieldCheck} tone="warning" />
+        <KpiCard title="رسوم المنصة" value={kpi ? money(kpi.platformFees) : "..."} icon={Coins} tone="success" />
+        <KpiCard title="إجمالي الإيرادات" value={kpi ? money(kpi.totalRevenue) : "..."} icon={Wallet} tone="primary" />
       </div>
 
       <Card className="mt-6">

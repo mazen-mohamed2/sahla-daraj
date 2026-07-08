@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { KpiCard } from "@/components/kpi-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useListings, useRevenue } from "@/hooks/queries";
-import { formatSAR } from "@/services/mock-data";
+import { useMoney } from "@/lib/format";
 import { Car, Coins, Gavel, TrendingUp } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/agency/")({ component: AgencyOverview });
 
 function AgencyOverview() {
+  const money = useMoney();
   const { data: listings } = useListings();
   const { data: rev } = useRevenue();
 
@@ -20,7 +21,7 @@ function AgencyOverview() {
         <KpiCard title="إعلاناتي" value={listings ? listings.length.toString() : "..."} icon={Car} tone="primary" />
         <KpiCard title="رصيد التوكن" value="2,450" icon={Coins} tone="warning" />
         <KpiCard title="العروض النشطة" value="14" icon={Gavel} tone="success" />
-        <KpiCard title="إيرادات الشهر" value={formatSAR(298000)} icon={TrendingUp} change="+18%" tone="success" />
+        <KpiCard title="إيرادات الشهر" value={money(298000)} icon={TrendingUp} change="+18%" tone="success" />
       </div>
 
       <Card className="mt-6">
