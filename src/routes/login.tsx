@@ -8,46 +8,52 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Car, Loader2 } from "lucide-react";
+import { Car, Loader2, Shield, Building2, User } from "lucide-react";
 import { useAuthStore, type Role } from "@/store/auth";
 import { useUIStore } from "@/store/ui";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
 const schema = z.object({
-  phone: z.string().regex(/^\+?20\s?1[0-9]{1,2}\s?[0-9\s]{7,}$/, "أدخل رقم مصري صالح (+20 10x...)"),
+  phone: z.string().regex(/^\+?20\s?1[0-9]{1,2}\s?[0-9\s]{7,}$/, "أدخل رقم مصري صالح (+20 1xx...)"),
   password: z.string().min(4, "كلمة المرور قصيرة"),
   remember: z.boolean().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
-function roleFromPhone(phone: string): Role {
-  const clean = phone.replace(/\s/g, "");
-  if (clean.startsWith("+20100")) return "admin";
-  if (clean.startsWith("+20101")) return "agency";
-  return "user";
-}
+const roleOptions: { role: Role; ar: string; en: string; icon: typeof User; phone: string }[] = [
+  { role: "user", ar: "مستخدم", en: "User", icon: User, phone: "+20 102 123 4567" },
+  { role: "agency", ar: "معرض", en: "Agency", icon: Building2, phone: "+20 101 123 4567" },
+  { role: "admin", ar: "مشرف", en: "Admin", icon: Shield, phone: "+20 100 123 4567" },
+];
 
 function LoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
   const lang = useUIStore((s) => s.lang);
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role>("user");
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { phone: "+20 100 123 4567", password: "demo1234", remember: true },
+    defaultValues: { phone: "+20 102 123 4567", password: "demo1234", remember: true },
   });
+
+  const pickRole = (role: Role) => {
+    setSelectedRole(role);
+    const opt = roleOptions.find((o) => o.role === role)!;
+    setValue("phone", opt.phone, { shouldValidate: true });
+  };
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
     setTimeout(() => {
-      const role = roleFromPhone(data.phone);
-      login(role, data.phone);
+      login(selectedRole, data.phone);
       toast.success(lang === "ar" ? "مرحبًا بك مجددًا" : "Welcome back");
-      navigate({ to: role === "admin" ? "/admin" : role === "agency" ? "/agency" : "/user" });
-    }, 1000);
+      navigate({ to: selectedRole === "admin" ? "/admin" : selectedRole === "agency" ? "/agency" : "/user" });
+    }, 800);
   };
 
   return (
@@ -63,10 +69,36 @@ function LoginPage() {
           </p>
         </CardHeader>
         <CardContent>
+          <div className="space-y-2 mb-5">
+            <Label>{lang === "ar" ? "اختر نوع الحساب" : "Account type"}</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {roleOptions.map((opt) => {
+                const Icon = opt.icon;
+                const active = selectedRole === opt.role;
+                return (
+                  <button
+                    key={opt.role}
+                    type="button"
+                    onClick={() => pickRole(opt.role)}
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-xs transition-all active:scale-95",
+                      active
+                        ? "border-primary bg-primary/10 text-primary shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-muted",
+                    )}
+                  >
+                    <Icon className="size-5" />
+                    <span className="font-medium">{lang === "ar" ? opt.ar : opt.en}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label>{lang === "ar" ? "رقم الهاتف" : "Phone"}</Label>
-              <Input dir="ltr" placeholder="+20 100 000 0000" {...register("phone")} />
+              <Input dir="ltr" placeholder="+20 1xx xxx xxxx" {...register("phone")} />
               {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
             </div>
             <div className="space-y-2">
@@ -82,16 +114,16 @@ function LoginPage() {
             </div>
             <Button type="submit" className="w-full active:scale-95 transition-transform" disabled={loading}>
               {loading && <Loader2 className="size-4 me-2 animate-spin" />}
-              {lang === "ar" ? "تسجيل الدخول" : "Sign in"}
+              {lang === "ar"
+                ? `دخول كـ ${roleOptions.find((o) => o.role === selectedRole)?.ar}`
+                : `Sign in as ${roleOptions.find((o) => o.role === selectedRole)?.en}`}
             </Button>
           </form>
 
-          <div className="mt-6 rounded-lg border border-dashed p-3 text-xs text-muted-foreground space-y-1">
-            <div className="font-medium text-foreground">{lang === "ar" ? "بيانات تجريبية:" : "Demo credentials:"}</div>
-            <div>+20 100 xxx xxxx → Admin</div>
-            <div>+20 101 xxx xxxx → Agency</div>
-            <div>+20 1xx xxx xxxx → User</div>
-            <div>{lang === "ar" ? "أي كلمة مرور 4 أحرف+" : "Any password 4+ chars"}</div>
+          <div className="mt-6 rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+            {lang === "ar"
+              ? "اختر نوع الحساب من الأعلى، أي كلمة مرور 4 أحرف فأكثر."
+              : "Pick an account type above. Any password 4+ chars works."}
           </div>
         </CardContent>
       </Card>
