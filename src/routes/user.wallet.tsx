@@ -7,9 +7,9 @@ import { ArrowDownToLine, ArrowUpFromLine, Wallet, ArrowDown, ArrowUp } from "lu
 import { useWalletTx } from "@/hooks/queries";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DepositDialog, WithdrawDialog, METHOD_LABEL, type PaymentMethod } from "@/components/flow";
+import { DepositDialog, WithdrawDialog } from "@/components/flow";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/user/wallet")({ component: WalletPage });
 
@@ -17,28 +17,17 @@ const TYPE_LABEL: Record<string, string> = {
   deposit: "إيداع", withdrawal: "سحب", escrow_hold: "حجز ضمان", escrow_release: "إفراج ضمان", fee: "رسوم",
 };
 
-type Tx = { id: string; type: string; amount: number; createdAt: string; method?: string };
+type LocalTx = { id: string; type: string; amount: number; createdAt: string };
 
 function WalletPage() {
   const money = useMoney();
   const { data, isLoading } = useWalletTx();
   const [balance, setBalance] = useState(45300);
-  const [depOpen, setDepOpen] = useState(false);
-  const [wdOpen, setWdOpen] = useState(false);
-  const [extraTx, setExtraTx] = useState<Tx[]>([]);
+  const [extra, setExtra] = useState<LocalTx[]>([]);
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
 
-  const onDeposit = (p: { amount: number; method: PaymentMethod; ref: string }) => {
-    setBalance((b) => b + p.amount);
-    setExtraTx((x) => [{ id: p.ref, type: "deposit", amount: p.amount, createdAt: new Date().toISOString(), method: METHOD_LABEL[p.method] }, ...x]);
-    toast.success(`تم إيداع ${money(p.amount)} في محفظتك`);
-  };
-  const onWithdraw = (p: { amount: number; method: PaymentMethod; ref: string }) => {
-    setBalance((b) => b - p.amount);
-    setExtraTx((x) => [{ id: p.ref, type: "withdrawal", amount: p.amount, createdAt: new Date().toISOString(), method: METHOD_LABEL[p.method] }, ...x]);
-    toast.success("تم تسجيل طلب السحب");
-  };
-
-  const allTx = [...extraTx, ...(data ?? [])];
+  const all: LocalTx[] = [...extra, ...(data ?? []).map((t) => ({ id: t.id, type: t.type, amount: t.amount, createdAt: t.createdAt }))];
 
   return (
     <DashboardLayout title="المحفظة">
@@ -49,10 +38,10 @@ function WalletPage() {
             <div className="mt-1 font-display text-5xl font-black">{money(balance)}</div>
           </div>
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setDepOpen(true)}>
+            <Button variant="secondary" onClick={() => setDepositOpen(true)}>
               <ArrowDownToLine className="ml-2 size-4" /> إيداع
             </Button>
-            <Button variant="outline" className="bg-transparent border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10" onClick={() => setWdOpen(true)}>
+            <Button variant="outline" className="bg-transparent border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10" onClick={() => setWithdrawOpen(true)}>
               <ArrowUpFromLine className="ml-2 size-4" /> طلب سحب
             </Button>
           </div>
@@ -63,17 +52,17 @@ function WalletPage() {
         <CardHeader><CardTitle className="font-display">سجل المعاملات</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {isLoading ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14" />) :
-            allTx.map((t) => {
+            all.map((t) => {
               const positive = t.type === "deposit" || t.type === "escrow_release";
               return (
-                <div key={t.id} className="flex items-center justify-between gap-2 rounded-lg border p-3 animate-in fade-in-50">
+                <div key={t.id} className="flex items-center justify-between gap-2 rounded-lg border p-3">
                   <div className="flex items-center gap-3">
                     <div className={`grid size-10 place-items-center rounded-lg ${positive ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive"}`}>
                       {positive ? <ArrowDown className="size-4" /> : <ArrowUp className="size-4" />}
                     </div>
                     <div>
-                      <div className="font-medium">{TYPE_LABEL[t.type]} {"method" in t && t.method ? <span className="text-xs text-muted-foreground">· {t.method}</span> : null}</div>
-                      <div className="text-xs text-muted-foreground">{formatDate(t.createdAt)} · <span className="font-mono">{t.id}</span></div>
+                      <div className="font-medium">{TYPE_LABEL[t.type] ?? t.type}</div>
+                      <div className="text-xs text-muted-foreground">{formatDate(t.createdAt)}</div>
                     </div>
                   </div>
                   <div className={`font-bold ${positive ? "text-success" : "text-destructive"}`}>
@@ -85,8 +74,25 @@ function WalletPage() {
         </CardContent>
       </Card>
 
-      <DepositDialog open={depOpen} onOpenChange={setDepOpen} onComplete={onDeposit} />
-      <WithdrawDialog open={wdOpen} onOpenChange={setWdOpen} availableBalance={balance} onComplete={onWithdraw} />
+      <DepositDialog
+        open={depositOpen}
+        onOpenChange={setDepositOpen}
+        onComplete={({ amount, ref }) => {
+          setBalance((b) => b + amount);
+          setExtra((e) => [{ id: ref, type: "deposit", amount, createdAt: new Date().toISOString() }, ...e]);
+          toast.success(`✅ تم إيداع ${money(amount)}`);
+        }}
+      />
+      <WithdrawDialog
+        open={withdrawOpen}
+        onOpenChange={setWithdrawOpen}
+        availableBalance={balance}
+        onComplete={({ amount, ref }) => {
+          setBalance((b) => b - amount);
+          setExtra((e) => [{ id: ref, type: "withdrawal", amount, createdAt: new Date().toISOString() }, ...e]);
+          toast.success(`تم إرسال طلب سحب ${money(amount)}`);
+        }}
+      />
     </DashboardLayout>
   );
 }
