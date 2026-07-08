@@ -143,7 +143,7 @@ function Tokens() {
 
         {step === 1 && (
           <>
-            <PaymentMethodPicker method={method} onChangeMethod={setMethod} account={account} onChangeAccount={(v) => { setAccount(v); if (accountError) setAccountError(undefined); }} accountError={accountError} />
+            <PaymentMethodPicker value={method} onChange={setMethod} account={account} onAccountChange={(v: string) => { setAccount(v); if (accountError) setAccountError(undefined); }} error={accountError} />
             <StepFooter>
               <Button variant="outline" className="flex-1" onClick={() => setStep(0)}>رجوع</Button>
               <Button className="flex-1" onClick={() => { if (validateAccount()) setStep(2); }}>التالي</Button>
