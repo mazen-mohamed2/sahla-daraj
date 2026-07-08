@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
-import { useListings, useDeleteListing, useUpdateListingStatus } from "@/hooks/queries";
+import { useListings, useDeleteListing } from "@/hooks/queries";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,11 @@ type L = { id: string; title: string; price: number; status: string; views: numb
 
 function MyListings() {
   const money = useMoney();
-  const nav = useNavigate();
   const { data, isLoading } = useListings();
   const del = useDeleteListing();
-  const upd = useUpdateListingStatus();
   const mine = data?.slice(0, 8);
-
-  const [boost, setBoost] = useState<L | null>(null);
-  const [delTarget, setDelTarget] = useState<L | null>(null);
+  const [boostTarget, setBoostTarget] = useState<L | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<L | null>(null);
 
   const cols: ColumnDef<L, unknown>[] = [
     { accessorKey: "title", header: "الإعلان", cell: ({ row }) => (
@@ -40,9 +37,11 @@ function MyListings() {
     { accessorKey: "createdAt", header: "التاريخ", cell: ({ row }) => formatDate(row.original.createdAt) },
     { id: "actions", header: "", cell: ({ row }) => (
       <div className="flex gap-1">
-        <Button size="icon" variant="ghost" title="تعزيز" onClick={() => setBoost(row.original)}><Rocket className="size-4" /></Button>
-        <Button size="icon" variant="ghost" title="تعديل" onClick={() => nav({ to: "/user/listings/$id", params: { id: row.original.id } })}><Pencil className="size-4" /></Button>
-        <Button size="icon" variant="ghost" title="حذف" className="text-destructive" onClick={() => setDelTarget(row.original)}><Trash2 className="size-4" /></Button>
+        <Button size="icon" variant="ghost" onClick={() => setBoostTarget(row.original)}><Rocket className="size-4" /></Button>
+        <Button size="icon" variant="ghost" asChild>
+          <Link to="/user/listings/$id" params={{ id: row.original.id }}><Pencil className="size-4" /></Link>
+        </Button>
+        <Button size="icon" variant="ghost" className="text-destructive" onClick={() => setDeleteTarget(row.original)}><Trash2 className="size-4" /></Button>
       </div>
     )},
   ];
@@ -50,19 +49,30 @@ function MyListings() {
   return (
     <DashboardLayout title="إعلاناتي">
       <DataTable columns={cols} data={mine} isLoading={isLoading} searchPlaceholder="ابحث في إعلاناتي..." emptyText="ليس لديك إعلانات بعد" />
-      {boost && (
-        <BoostDialog open={!!boost} onOpenChange={(o) => !o && setBoost(null)}
-          listingTitle={boost.title}
-          onSuccess={async () => { await upd.mutateAsync({ id: boost.id, status: "active" }); toast.success("تم تعزيز الإعلان"); }} />
+
+      {boostTarget && (
+        <BoostDialog
+          open={!!boostTarget}
+          onOpenChange={(o) => !o && setBoostTarget(null)}
+          listingTitle={boostTarget.title}
+          onSuccess={() => toast.success(`تم تعزيز ${boostTarget.title}`)}
+        />
       )}
-      {delTarget && (
-        <ConfirmDialog open={!!delTarget} onOpenChange={(o) => !o && setDelTarget(null)}
-          title={`حذف "${delTarget.title}"`}
-          description="سيتم حذف الإعلان نهائياً من المنصة، ولن يظهر للمشترين مرة أخرى."
-          destructive
-          typeToConfirm="احذف"
+
+      {deleteTarget && (
+        <ConfirmDialog
+          open={!!deleteTarget}
+          onOpenChange={(o) => !o && setDeleteTarget(null)}
+          title={`حذف إعلان "${deleteTarget.title}"`}
+          description="سيُحذف الإعلان نهائياً مع جميع صوره ومحادثاته المرتبطة. لا يمكن التراجع."
           confirmLabel="حذف نهائي"
-          onConfirm={async () => { await del.mutateAsync(delTarget.id); toast.success("تم حذف الإعلان"); }}
+          destructive
+          typeToConfirm={deleteTarget.title}
+          onConfirm={async () => {
+            await del.mutateAsync(deleteTarget.id);
+            toast.warning(`تم حذف ${deleteTarget.title}`);
+            setDeleteTarget(null);
+          }}
         />
       )}
     </DashboardLayout>
