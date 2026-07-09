@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNotifications } from "@/store/notifications";
+import { useAuthStore } from "@/store/auth";
+
 
 export type WalletTxType = "deposit" | "withdrawal" | "escrow_hold" | "escrow_release" | "fee";
 export type WalletTxStatus = "completed" | "pending" | "failed";
@@ -79,11 +81,17 @@ export function useCommitWalletTx() {
       });
 
       // notifications
+      const role = useAuthStore.getState().role;
       if (tx.type === "deposit" && tx.status === "completed") {
-        notify({ type: "system", title: "تم الإيداع بنجاح", body: `تمت إضافة ${tx.amount.toLocaleString("ar-EG")} ج.م إلى محفظتك` });
+        notify(role, { title: "تم الإيداع بنجاح", message: `تمت إضافة ${tx.amount.toLocaleString("ar-EG")} ج.م إلى محفظتك`, category: "wallet", relatedEntityType: "wallet_tx", relatedEntityId: tx.id, actionUrl: `/${role}/wallet`, priority: "medium" });
       } else if (tx.type === "withdrawal" && tx.status === "pending") {
-        notify({ type: "system", title: "تم استلام طلب السحب", body: `طلب سحب بقيمة ${tx.amount.toLocaleString("ar-EG")} ج.م قيد المراجعة` });
+        notify(role, { title: "تم استلام طلب السحب", message: `طلب سحب بقيمة ${tx.amount.toLocaleString("ar-EG")} ج.م قيد المراجعة`, category: "wallet", relatedEntityType: "wallet_tx", relatedEntityId: tx.id, actionUrl: `/${role}/wallet`, priority: "medium" });
+        // notify admin of large withdrawals
+        if (tx.amount >= 100000) {
+          useNotifications.getState().add("admin", { title: "طلب سحب كبير", message: `طلب سحب بقيمة ${tx.amount.toLocaleString("ar-EG")} ج.م بانتظار المراجعة`, category: "wallet", relatedEntityType: "withdrawal", relatedEntityId: tx.id, actionUrl: "/admin/financial", priority: "high" });
+        }
       }
     },
   });
 }
+

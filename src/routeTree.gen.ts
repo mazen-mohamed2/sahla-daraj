@@ -20,6 +20,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserSettingsRouteImport } from './routes/user.settings'
 import { Route as UserProfileRouteImport } from './routes/user.profile'
+import { Route as UserNotificationsRouteImport } from './routes/user.notifications'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
 import { Route as UserImportRequestsRouteImport } from './routes/user.import-requests'
 import { Route as UserFavoritesRouteImport } from './routes/user.favorites'
@@ -27,6 +28,7 @@ import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as UserChatRouteImport } from './routes/user.chat'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
+import { Route as AgencyNotificationsRouteImport } from './routes/agency.notifications'
 import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
 import { Route as AgencyChatRouteImport } from './routes/agency.chat'
@@ -34,6 +36,7 @@ import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
@@ -95,6 +98,11 @@ const UserProfileRoute = UserProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => UserRoute,
 } as any)
+const UserNotificationsRoute = UserNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserListingsRoute = UserListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
@@ -130,6 +138,11 @@ const AgencyTokensRoute = AgencyTokensRouteImport.update({
   path: '/tokens',
   getParentRoute: () => AgencyRoute,
 } as any)
+const AgencyNotificationsRoute = AgencyNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AgencyRoute,
+} as any)
 const AgencyListingsRoute = AgencyListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
@@ -163,6 +176,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const AdminProfileRoute = AdminProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminListingsRoute = AdminListingsRouteImport.update({
@@ -201,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -208,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
+  '/agency/notifications': typeof AgencyNotificationsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -215,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -230,6 +251,7 @@ export interface FileRoutesByTo {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -237,6 +259,7 @@ export interface FileRoutesByTo {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
+  '/agency/notifications': typeof AgencyNotificationsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -244,6 +267,7 @@ export interface FileRoutesByTo {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -263,6 +287,7 @@ export interface FileRoutesById {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -270,6 +295,7 @@ export interface FileRoutesById {
   '/agency/chat': typeof AgencyChatRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
+  '/agency/notifications': typeof AgencyNotificationsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -277,6 +303,7 @@ export interface FileRoutesById {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -297,6 +324,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -304,6 +332,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/listings'
+    | '/agency/notifications'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -311,6 +340,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -326,6 +356,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -333,6 +364,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/listings'
+    | '/agency/notifications'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -340,6 +372,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -358,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -365,6 +399,7 @@ export interface FileRouteTypes {
     | '/agency/chat'
     | '/agency/inventory'
     | '/agency/listings'
+    | '/agency/notifications'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -372,6 +407,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -468,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserProfileRouteImport
       parentRoute: typeof UserRoute
     }
+    '/user/notifications': {
+      id: '/user/notifications'
+      path: '/notifications'
+      fullPath: '/user/notifications'
+      preLoaderRoute: typeof UserNotificationsRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/user/listings': {
       id: '/user/listings'
       path: '/listings'
@@ -515,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: '/tokens'
       fullPath: '/agency/tokens'
       preLoaderRoute: typeof AgencyTokensRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/notifications': {
+      id: '/agency/notifications'
+      path: '/notifications'
+      fullPath: '/agency/notifications'
+      preLoaderRoute: typeof AgencyNotificationsRouteImport
       parentRoute: typeof AgencyRoute
     }
     '/agency/listings': {
@@ -566,6 +616,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProfileRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/listings': {
       id: '/admin/listings'
       path: '/listings'
@@ -609,6 +666,7 @@ interface AdminRouteChildren {
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
   AdminListingsRoute: typeof AdminListingsRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -619,6 +677,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDisputesRoute: AdminDisputesRoute,
   AdminFinancialRoute: AdminFinancialRoute,
   AdminListingsRoute: AdminListingsRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -632,6 +691,7 @@ interface AgencyRouteChildren {
   AgencyChatRoute: typeof AgencyChatRoute
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyListingsRoute: typeof AgencyListingsRoute
+  AgencyNotificationsRoute: typeof AgencyNotificationsRoute
   AgencyTokensRoute: typeof AgencyTokensRoute
   AgencyIndexRoute: typeof AgencyIndexRoute
 }
@@ -642,6 +702,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyChatRoute: AgencyChatRoute,
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyListingsRoute: AgencyListingsRoute,
+  AgencyNotificationsRoute: AgencyNotificationsRoute,
   AgencyTokensRoute: AgencyTokensRoute,
   AgencyIndexRoute: AgencyIndexRoute,
 }
@@ -668,6 +729,7 @@ interface UserRouteChildren {
   UserFavoritesRoute: typeof UserFavoritesRoute
   UserImportRequestsRoute: typeof UserImportRequestsRoute
   UserListingsRoute: typeof UserListingsRouteWithChildren
+  UserNotificationsRoute: typeof UserNotificationsRoute
   UserProfileRoute: typeof UserProfileRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserWalletRoute: typeof UserWalletRoute
@@ -681,6 +743,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserFavoritesRoute: UserFavoritesRoute,
   UserImportRequestsRoute: UserImportRequestsRoute,
   UserListingsRoute: UserListingsRouteWithChildren,
+  UserNotificationsRoute: UserNotificationsRoute,
   UserProfileRoute: UserProfileRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserWalletRoute: UserWalletRoute,

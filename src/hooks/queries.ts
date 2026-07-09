@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as mock from "../services/mock-data";
+import { notify } from "@/store/notifications";
 
 const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
+
 
 export const useKPIs = () =>
   useQuery({ queryKey: ["kpis"], queryFn: async () => { await delay(); return mock.mockKPI; } });
@@ -63,6 +65,12 @@ export const useUpdateUserStatus = () => {
       qc.setQueryData<User[]>(["users"], (old) =>
         old?.map((u) => (u.id === result.id ? { ...u, ...(result.status ? { status: result.status as User["status"] } : {}), ...(result.verified !== undefined ? { verified: result.verified } : {}) } : u)),
       );
+      if (result.status === "banned") {
+        notify("admin", { title: "تم حظر مستخدم", message: `تم حظر المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "medium" });
+      } else if (result.verified) {
+        notify("admin", { title: "تم توثيق مستخدم", message: `تم توثيق المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "low" });
+        notify("user", { title: "تم توثيق حسابك", message: "تمت الموافقة على طلب التوثيق (KYC)", category: "account", relatedEntityType: "kyc", actionUrl: "/user/profile", priority: "high" });
+      }
     },
   });
 };
@@ -91,6 +99,9 @@ export const useUpdateDisputeStatus = () => {
       qc.setQueryData<Dispute[]>(["disputes"], (old) =>
         old?.map((d) => (d.id === result.id ? { ...d, status: result.status as Dispute["status"], note: result.note ?? d.note } : d)),
       );
+      if (result.status === "resolved" || result.status === "rejected") {
+        notify("user", { title: result.status === "resolved" ? "تم حل النزاع" : "تم رفض النزاع", message: `النزاع ${result.id}${result.note ? ` — ${result.note}` : ""}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: result.id, actionUrl: "/user/escrow", priority: "high" });
+      }
     },
   });
 };
@@ -106,6 +117,8 @@ export const useUpdateWithdrawalStatus = () => {
       qc.setQueryData<Withdrawal[]>(["withdrawals"], (old) =>
         old?.map((w) => (w.id === result.id ? { ...w, status: result.status as Withdrawal["status"] } : w)),
       );
+      const title = result.status === "approved" ? "تمت الموافقة على سحبك" : result.status === "rejected" ? "تم رفض طلب السحب" : "تم تحديث طلب السحب";
+      notify("user", { title, message: `طلب السحب ${result.id}`, category: "wallet", relatedEntityType: "withdrawal", relatedEntityId: result.id, actionUrl: "/user/wallet", priority: "high" });
     },
   });
 };
@@ -121,6 +134,9 @@ export const useUpdateAgencyStatus = () => {
       qc.setQueryData<Agency[]>(["agency-apps"], (old) =>
         old?.map((a) => (a.id === result.id ? { ...a, status: result.status as Agency["status"] } : a)),
       );
+      const approved = result.status === "approved";
+      notify("agency", { title: approved ? "تمت الموافقة على معرضك" : "تم رفض طلب اعتماد المعرض", message: approved ? "أصبح بإمكانك النشر الآن" : (result.reason ?? "يرجى مراجعة الشروط"), category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/agency", priority: "high" });
+      notify("admin", { title: approved ? "تم اعتماد معرض" : "تم رفض معرض", message: `المعرض ${result.id}`, category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/admin/agencies", priority: "low" });
     },
   });
 };
@@ -134,6 +150,7 @@ export const useAddAgency = () => {
     },
     onSuccess: (n) => {
       qc.setQueryData<Agency[]>(["agency-apps"], (old) => [n, ...(old ?? [])]);
+      notify("admin", { title: "طلب اعتماد معرض جديد", message: `معرض ${n.name ?? n.id} قدم طلب اعتماد`, category: "account", relatedEntityType: "agency", relatedEntityId: n.id, actionUrl: "/admin/agencies", priority: "high" });
     },
   });
 };
@@ -149,6 +166,11 @@ export const useUpdateEscrowStatus = () => {
       qc.setQueryData<Escrow[]>(["escrows"], (old) =>
         old?.map((e) => (e.id === result.id ? { ...e, status: result.status as Escrow["status"], reason: result.reason ?? e.reason } : e)),
       );
+      const map: Record<string, string> = { released: "تم الإفراج عن الضمان", refunded: "تم استرداد المبلغ", disputed: "تم فتح نزاع على الضمان" };
+      notify("user", { title: map[result.status] ?? "تم تحديث حالة الضمان", message: `الصفقة ${result.id}${result.reason ? ` — ${result.reason}` : ""}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: result.id, actionUrl: "/user/escrow", priority: result.status === "disputed" ? "high" : "medium" });
+      if (result.status === "disputed") {
+        notify("admin", { title: "نزاع جديد", message: `فتح المشتري نزاعاً على الصفقة ${result.id}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: result.id, actionUrl: "/admin/disputes", priority: "high" });
+      }
     },
   });
 };
@@ -216,6 +238,12 @@ export const useUpdateListingStatus = () => {
         old?.map((l) => (l.id === result.id ? { ...l, status: result.status as Listing["status"] } : l)),
       );
       qc.setQueryData<Listing[]>(["listings", "pending"], (old) => old?.filter((l) => l.id !== result.id));
+      const approved = result.status === "active" || result.status === "approved";
+      const title = approved ? "تم قبول إعلانك" : result.status === "rejected" ? "تم رفض إعلانك" : "تم تحديث حالة الإعلان";
+      // notify both user and agency feeds; sidebar shows per active role
+      for (const r of ["user", "agency"] as const) {
+        notify(r, { title, message: `الإعلان ${result.id}`, category: "listings", relatedEntityType: "listing", relatedEntityId: result.id, actionUrl: `/${r}/listings`, priority: "medium" });
+      }
     },
   });
 };
