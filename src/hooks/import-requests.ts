@@ -338,9 +338,11 @@ export const useWithdrawOffer = () => {
         );
         pushAudit(qc, { actor: offer.agencyName, action: "withdraw_offer", targetType: "offer", targetId: id });
       }
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 export const useAcceptOffer = () => {
   const qc = useQueryClient();
