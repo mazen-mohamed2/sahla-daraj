@@ -18,6 +18,14 @@ const MAP: Record<string, { label: string; cls: string }> = {
   disputed: { label: "متنازع", cls: "bg-destructive/15 text-destructive border-destructive/30" },
   bidding: { label: "عروض جارية", cls: "bg-primary/15 text-primary border-primary/30" },
   closed: { label: "مغلق", cls: "bg-muted text-muted-foreground border-border" },
+  pending_payment: { label: "بانتظار الدفع", cls: "bg-warning/20 text-warning-foreground border-warning/40" },
+  paid: { label: "تم الدفع", cls: "bg-primary/15 text-primary border-primary/30" },
+  purchased: { label: "تم الشراء", cls: "bg-primary/15 text-primary border-primary/30" },
+  shipping: { label: "قيد الشحن", cls: "bg-primary/15 text-primary border-primary/30" },
+  delivered: { label: "تم التسليم", cls: "bg-primary/15 text-primary border-primary/30" },
+  awaiting_confirmation: { label: "بانتظار تأكيد المشتري", cls: "bg-warning/20 text-warning-foreground border-warning/40" },
+  under_review: { label: "قيد المراجعة", cls: "bg-primary/15 text-primary border-primary/30" },
+  resolved: { label: "تم الحل", cls: "bg-success/15 text-success border-success/30" },
 };
 
 export function StatusBadge({ status }: { status: string }) {

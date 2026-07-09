@@ -31,6 +31,7 @@ import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
 import { Route as AgencyNotificationsRouteImport } from './routes/agency.notifications'
 import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
+import { Route as AgencyEscrowRouteImport } from './routes/agency.escrow'
 import { Route as AgencyChatRouteImport } from './routes/agency.chat'
 import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
@@ -40,6 +41,7 @@ import { Route as AdminNotificationsRouteImport } from './routes/admin.notificat
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminImportRequestsRouteImport } from './routes/admin.import-requests'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
+import { Route as AdminEscrowRouteImport } from './routes/admin.escrow'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as UserListingsIdRouteImport } from './routes/user.listings.$id'
@@ -154,6 +156,11 @@ const AgencyInventoryRoute = AgencyInventoryRouteImport.update({
   path: '/inventory',
   getParentRoute: () => AgencyRoute,
 } as any)
+const AgencyEscrowRoute = AgencyEscrowRouteImport.update({
+  id: '/escrow',
+  path: '/escrow',
+  getParentRoute: () => AgencyRoute,
+} as any)
 const AgencyChatRoute = AgencyChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -199,6 +206,11 @@ const AdminFinancialRoute = AdminFinancialRouteImport.update({
   path: '/financial',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEscrowRoute = AdminEscrowRouteImport.update({
+  id: '/escrow',
+  path: '/escrow',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDisputesRoute = AdminDisputesRouteImport.update({
   id: '/disputes',
   path: '/disputes',
@@ -223,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -232,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -256,6 +270,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -265,6 +280,7 @@ export interface FileRoutesByTo {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -293,6 +309,7 @@ export interface FileRoutesById {
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -302,6 +319,7 @@ export interface FileRoutesById {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -331,6 +349,7 @@ export interface FileRouteTypes {
     | '/user'
     | '/admin/agencies'
     | '/admin/disputes'
+    | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
     | '/admin/listings'
@@ -340,6 +359,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -364,6 +384,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/admin/agencies'
     | '/admin/disputes'
+    | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
     | '/admin/listings'
@@ -373,6 +394,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -400,6 +422,7 @@ export interface FileRouteTypes {
     | '/user'
     | '/admin/agencies'
     | '/admin/disputes'
+    | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
     | '/admin/listings'
@@ -409,6 +432,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -593,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyInventoryRouteImport
       parentRoute: typeof AgencyRoute
     }
+    '/agency/escrow': {
+      id: '/agency/escrow'
+      path: '/escrow'
+      fullPath: '/agency/escrow'
+      preLoaderRoute: typeof AgencyEscrowRouteImport
+      parentRoute: typeof AgencyRoute
+    }
     '/agency/chat': {
       id: '/agency/chat'
       path: '/chat'
@@ -656,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFinancialRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/escrow': {
+      id: '/admin/escrow'
+      path: '/escrow'
+      fullPath: '/admin/escrow'
+      preLoaderRoute: typeof AdminEscrowRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/disputes': {
       id: '/admin/disputes'
       path: '/disputes'
@@ -683,6 +721,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAgenciesRoute: typeof AdminAgenciesRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
+  AdminEscrowRoute: typeof AdminEscrowRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
   AdminImportRequestsRoute: typeof AdminImportRequestsRoute
   AdminListingsRoute: typeof AdminListingsRoute
@@ -695,6 +734,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgenciesRoute: AdminAgenciesRoute,
   AdminDisputesRoute: AdminDisputesRoute,
+  AdminEscrowRoute: AdminEscrowRoute,
   AdminFinancialRoute: AdminFinancialRoute,
   AdminImportRequestsRoute: AdminImportRequestsRoute,
   AdminListingsRoute: AdminListingsRoute,
@@ -710,6 +750,7 @@ interface AgencyRouteChildren {
   AgencyAddListingRoute: typeof AgencyAddListingRoute
   AgencyBidsRoute: typeof AgencyBidsRoute
   AgencyChatRoute: typeof AgencyChatRoute
+  AgencyEscrowRoute: typeof AgencyEscrowRoute
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyListingsRoute: typeof AgencyListingsRoute
   AgencyNotificationsRoute: typeof AgencyNotificationsRoute
@@ -721,6 +762,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyAddListingRoute: AgencyAddListingRoute,
   AgencyBidsRoute: AgencyBidsRoute,
   AgencyChatRoute: AgencyChatRoute,
+  AgencyEscrowRoute: AgencyEscrowRoute,
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyListingsRoute: AgencyListingsRoute,
   AgencyNotificationsRoute: AgencyNotificationsRoute,

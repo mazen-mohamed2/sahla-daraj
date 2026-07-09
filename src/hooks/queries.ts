@@ -41,8 +41,7 @@ export const useMessages = (id?: string) =>
 export const useImportRequests = () =>
   useQuery({ queryKey: ["import-requests"], queryFn: async () => { await delay(); return mock.mockImportRequests; } });
 
-export const useEscrows = () =>
-  useQuery({ queryKey: ["escrows"], queryFn: async () => { await delay(); return mock.mockEscrows; } });
+export { useEscrows, useEscrow, useUpdateEscrowStatus } from "./escrows";
 
 export const useWalletTx = () =>
   useQuery({ queryKey: ["wallet-tx"], queryFn: async () => { await delay(); return mock.mockWalletTx; } });
@@ -52,7 +51,7 @@ type Listing = (typeof mock.mockListings)[number];
 type Dispute = (typeof mock.mockDisputes)[number];
 type Withdrawal = (typeof mock.mockWithdrawals)[number];
 type Agency = (typeof mock.mockAgencyApplications)[number];
-type Escrow = (typeof mock.mockEscrows)[number];
+
 
 export const useUpdateUserStatus = () => {
   const qc = useQueryClient();
@@ -155,25 +154,6 @@ export const useAddAgency = () => {
   });
 };
 
-export const useUpdateEscrowStatus = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, status, reason }: { id: string; status: string; reason?: string }) => {
-      await delay(500);
-      return { id, status, reason };
-    },
-    onSuccess: (result) => {
-      qc.setQueryData<Escrow[]>(["escrows"], (old) =>
-        old?.map((e) => (e.id === result.id ? { ...e, status: result.status as Escrow["status"], reason: result.reason ?? e.reason } : e)),
-      );
-      const map: Record<string, string> = { released: "تم الإفراج عن الضمان", refunded: "تم استرداد المبلغ", disputed: "تم فتح نزاع على الضمان" };
-      notify("user", { title: map[result.status] ?? "تم تحديث حالة الضمان", message: `الصفقة ${result.id}${result.reason ? ` — ${result.reason}` : ""}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: result.id, actionUrl: "/user/escrow", priority: result.status === "disputed" ? "high" : "medium" });
-      if (result.status === "disputed") {
-        notify("admin", { title: "نزاع جديد", message: `فتح المشتري نزاعاً على الصفقة ${result.id}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: result.id, actionUrl: "/admin/disputes", priority: "high" });
-      }
-    },
-  });
-};
 
 export const useAddListing = () => {
   const qc = useQueryClient();
