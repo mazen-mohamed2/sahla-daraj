@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Eye, Flag, Lock, Unlock, EyeOff, StickyNote, Package, Ship, Clock, Users } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { useImportRequestsV2, useAllOffers, useAdminSetRequestStatus, useAdminAddNote, useAuditLog } from "@/hooks/import-requests";
+import { useImportRequestsV2, useAllOffers, useAdminSetRequestStatus, useAdminAddNote, useAuditLog, useAdminToggleHidden, useAdminToggleReported } from "@/hooks/import-requests";
 import { STATUS_LABELS_AR, STATUS_VARIANTS, type ImportRequest, type ImportStatus } from "@/services/import-data";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
@@ -32,6 +32,9 @@ function AdminImportRequests() {
   const { data: audit } = useAuditLog();
   const setStatus = useAdminSetRequestStatus();
   const addNote = useAdminAddNote();
+  const toggleHidden = useAdminToggleHidden();
+  const toggleReported = useAdminToggleReported();
+
 
   const [q, setQ] = useState("");
   const [status, setStatus_, ] = useState<ImportStatus | "all">("all");
@@ -45,9 +48,14 @@ function AdminImportRequests() {
 
   const offersByReq = useMemo(() => {
     const m = new Map<string, number>();
-    (offers ?? []).forEach((o) => m.set(o.requestId, (m.get(o.requestId) ?? 0) + 1));
+    (offers ?? []).forEach((o) => {
+      if (o.status === "pending" || o.status === "accepted") {
+        m.set(o.requestId, (m.get(o.requestId) ?? 0) + 1);
+      }
+    });
     return m;
   }, [offers]);
+
 
   const stats = useMemo(() => {
     const list = data ?? [];
@@ -152,7 +160,13 @@ function AdminImportRequests() {
                   <td className="p-3">{r.requester}</td>
                   <td className="p-3 font-semibold">{money(r.budget)}</td>
                   <td className="p-3">{offersByReq.get(r.id) ?? 0}</td>
-                  <td className="p-3"><Badge variant={STATUS_VARIANTS[r.status]}>{STATUS_LABELS_AR[r.status]}</Badge></td>
+                  <td className="p-3">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <Badge variant={STATUS_VARIANTS[r.status]}>{STATUS_LABELS_AR[r.status]}</Badge>
+                      {r.hidden && <Badge variant="outline">مخفي</Badge>}
+                      {r.reported && <Badge variant="destructive">مبلغ عنه</Badge>}
+                    </div>
+                  </td>
                   <td className="p-3 text-xs">{formatDate(r.createdAt)}</td>
                   <td className="p-3">
                     <DropdownMenu>
@@ -163,24 +177,39 @@ function AdminImportRequests() {
                         <DropdownMenuItem onClick={() => setDetail(r)}><Eye className="ml-2 size-4" /> عرض</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setOffersFor(r)}><Package className="ml-2 size-4" /> العروض</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {r.status !== "closed" && (
+                        {r.status !== "closed" && r.status !== "accepted" && r.status !== "cancelled" && (
                           <DropdownMenuItem onClick={() => setCloseTarget(r)}><Lock className="ml-2 size-4" /> إغلاق الطلب</DropdownMenuItem>
                         )}
-                        {(r.status === "closed" || r.status === "cancelled" || r.status === "hidden") && (
+                        {(r.status === "closed" || r.status === "cancelled") && (
                           <DropdownMenuItem onClick={() => setStatus.mutate({ id: r.id, status: "open" })}>
                             <Unlock className="ml-2 size-4" /> إعادة فتح
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => setFlagTarget(r)}><Flag className="ml-2 size-4" /> إبلاغ</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatus.mutate({ id: r.id, status: "hidden" })}>
-                          <EyeOff className="ml-2 size-4" /> إخفاء
-                        </DropdownMenuItem>
+                        {r.reported ? (
+                          <DropdownMenuItem onClick={() => toggleReported.mutate({ id: r.id })}>
+                            <Flag className="ml-2 size-4" /> إزالة البلاغ
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem onClick={() => setFlagTarget(r)}>
+                            <Flag className="ml-2 size-4" /> إبلاغ
+                          </DropdownMenuItem>
+                        )}
+                        {r.hidden ? (
+                          <DropdownMenuItem onClick={() => toggleHidden.mutate({ id: r.id })}>
+                            <Eye className="ml-2 size-4" /> إظهار
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem onClick={() => toggleHidden.mutate({ id: r.id })}>
+                            <EyeOff className="ml-2 size-4" /> إخفاء
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => { setNoteTarget(r); setNote(r.adminNotes); }}>
                           <StickyNote className="ml-2 size-4" /> ملاحظات
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
+
                 </tr>
               ))}
             </tbody>
@@ -230,9 +259,10 @@ function AdminImportRequests() {
         destructive
         onSubmit={async ({ reason, details }) => {
           if (!flagTarget) return;
-          await setStatus.mutateAsync({ id: flagTarget.id, status: "flagged", reason: `${reason} — ${details}` });
+          await toggleReported.mutateAsync({ id: flagTarget.id, reason: `${reason}${details ? ` — ${details}` : ""}` });
           setFlagTarget(null);
         }}
+
       />
 
       <Dialog open={!!noteTarget} onOpenChange={(o) => !o && setNoteTarget(null)}>

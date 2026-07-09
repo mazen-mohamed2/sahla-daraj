@@ -39,14 +39,18 @@ function ImportRequests() {
   const [status, setStatus] = useState<ImportStatus | "all">("all");
 
   const mine = useMemo(() => {
-    const list = data ?? [];
-    // Show requests owned by this user + the first 4 seeded (so demo isn't empty)
+    const list = (data ?? []).filter((r) => !r.hidden);
     const owned = list.filter((r) => r.requesterId === auth.phone);
     const seed = list.filter((r) => r.requesterId !== auth.phone).slice(0, 4);
     return [...owned, ...seed];
   }, [data, auth.phone]);
 
-  const offerCount = (id: string) => (allOffers ?? []).filter((o) => o.requestId === id).length;
+  const activeOfferCount = (id: string) =>
+    (allOffers ?? []).filter((o) => o.requestId === id && (o.status === "pending" || o.status === "accepted")).length;
+  const acceptedOfferOf = (id: string) =>
+    (allOffers ?? []).find((o) => o.requestId === id && o.status === "accepted");
+
+
 
   const filtered = mine.filter((r) => {
     if (status !== "all" && r.status !== status) return false;
@@ -148,15 +152,32 @@ function ImportRequests() {
                   <div className="grid grid-cols-2 gap-2">
                     <Info label="الميزانية" value={money(r.budget)} />
                     <Info label="الاستلام" value={r.destination} />
-                    <Info label="العروض" value={String(offerCount(r.id))} />
+                    <Info
+                      label={r.status === "accepted" ? "العرض المقبول" : "العروض النشطة"}
+                      value={
+                        r.status === "accepted"
+                          ? acceptedOfferOf(r.id)?.agencyName ?? "—"
+                          : r.status === "cancelled" || r.status === "closed"
+                            ? "—"
+                            : String(activeOfferCount(r.id))
+                      }
+                    />
                     <Info label="آخر تحديث" value={formatDate(r.updatedAt)} />
                   </div>
                   <div className="flex gap-2 pt-2">
                     <Button variant="outline" size="sm" className="flex-1" onClick={() => setDetail(r)}>التفاصيل</Button>
                     <Button size="sm" className="flex-1" onClick={() => setOffersFor(r)}>
-                      <Package className="ml-1 size-3.5" /> العروض ({offerCount(r.id)})
+                      <Package className="ml-1 size-3.5" />
+                      {r.status === "accepted"
+                        ? "تم قبول العرض"
+                        : r.status === "cancelled"
+                          ? "الطلب ملغي"
+                          : r.status === "closed"
+                            ? "الطلب مغلق"
+                            : `العروض (${activeOfferCount(r.id)})`}
                     </Button>
                   </div>
+
                 </CardContent>
               </Card>
             );

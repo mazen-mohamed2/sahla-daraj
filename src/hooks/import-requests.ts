@@ -338,9 +338,11 @@ export const useWithdrawOffer = () => {
         );
         pushAudit(qc, { actor: offer.agencyName, action: "withdraw_offer", targetType: "offer", targetId: id });
       }
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 export const useAcceptOffer = () => {
   const qc = useQueryClient();
@@ -436,9 +438,11 @@ export const useAcceptOffer = () => {
         actionUrl: "/admin/financial",
         priority: "medium",
       });
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 export const useRejectOffer = () => {
   const qc = useQueryClient();
@@ -471,9 +475,11 @@ export const useRejectOffer = () => {
           priority: "medium",
         });
       }
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 // ============ Admin actions ============
 
@@ -543,3 +549,69 @@ export const useAdminAddNote = () => {
     },
   });
 };
+
+export const useAdminToggleHidden = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => { await delay(300); return { id }; },
+    onSuccess: ({ id }) => {
+      let newHidden = false;
+      qc.setQueryData<ImportRequest[]>(RK, (old = []) =>
+        old.map((r) => {
+          if (r.id !== id) return r;
+          newHidden = !r.hidden;
+          return {
+            ...r,
+            hidden: newHidden,
+            updatedAt: new Date().toISOString(),
+            timeline: [...r.timeline, tev(newHidden ? "hidden" : "reopened", newHidden ? "تم إخفاء الطلب من الإدارة" : "تم إظهار الطلب مجدداً", "الإدارة")],
+          };
+        }),
+      );
+      pushAudit(qc, { actor: "admin", action: newHidden ? "hide" : "unhide", targetType: "import_request", targetId: id });
+      notify("user", {
+        title: newHidden ? "تم إخفاء طلبك" : "تم إعادة إظهار طلبك",
+        message: `طلب الاستيراد ${id}`,
+        category: "import",
+        relatedEntityType: "import_request",
+        relatedEntityId: id,
+        actionUrl: "/user/import-requests",
+        priority: "medium",
+      });
+    },
+  });
+};
+
+export const useAdminToggleReported = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => { await delay(300); return { id, reason }; },
+    onSuccess: ({ id, reason }) => {
+      let newReported = false;
+      qc.setQueryData<ImportRequest[]>(RK, (old = []) =>
+        old.map((r) => {
+          if (r.id !== id) return r;
+          newReported = !r.reported;
+          return {
+            ...r,
+            reported: newReported,
+            reportReason: newReported ? reason ?? r.reportReason : undefined,
+            updatedAt: new Date().toISOString(),
+            timeline: [...r.timeline, tev(newReported ? "flagged" : "reopened", newReported ? `تم الإبلاغ عن الطلب${reason ? `: ${reason}` : ""}` : "تم إزالة البلاغ عن الطلب", "الإدارة")],
+          };
+        }),
+      );
+      pushAudit(qc, { actor: "admin", action: newReported ? "report" : "unreport", targetType: "import_request", targetId: id, meta: reason });
+      notify("user", {
+        title: newReported ? "تم الإبلاغ عن طلبك" : "تم إزالة البلاغ عن طلبك",
+        message: `طلب الاستيراد ${id}${newReported && reason ? ` — ${reason}` : ""}`,
+        category: "import",
+        relatedEntityType: "import_request",
+        relatedEntityId: id,
+        actionUrl: "/user/import-requests",
+        priority: newReported ? "high" : "medium",
+      });
+    },
+  });
+};
+
