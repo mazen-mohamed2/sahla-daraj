@@ -90,11 +90,11 @@ export const useNotifications = create<State>()(
             ...s.feeds,
             [role]: [
               {
+                ...input,
                 id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
                 createdAt: new Date().toISOString(),
                 read: false,
                 priority: input.priority ?? "medium",
-                ...input,
               },
               ...s.feeds[role],
             ],
