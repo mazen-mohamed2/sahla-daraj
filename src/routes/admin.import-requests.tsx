@@ -160,7 +160,13 @@ function AdminImportRequests() {
                   <td className="p-3">{r.requester}</td>
                   <td className="p-3 font-semibold">{money(r.budget)}</td>
                   <td className="p-3">{offersByReq.get(r.id) ?? 0}</td>
-                  <td className="p-3"><Badge variant={STATUS_VARIANTS[r.status]}>{STATUS_LABELS_AR[r.status]}</Badge></td>
+                  <td className="p-3">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <Badge variant={STATUS_VARIANTS[r.status]}>{STATUS_LABELS_AR[r.status]}</Badge>
+                      {r.hidden && <Badge variant="outline">مخفي</Badge>}
+                      {r.reported && <Badge variant="destructive">مبلغ عنه</Badge>}
+                    </div>
+                  </td>
                   <td className="p-3 text-xs">{formatDate(r.createdAt)}</td>
                   <td className="p-3">
                     <DropdownMenu>
@@ -171,24 +177,39 @@ function AdminImportRequests() {
                         <DropdownMenuItem onClick={() => setDetail(r)}><Eye className="ml-2 size-4" /> عرض</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setOffersFor(r)}><Package className="ml-2 size-4" /> العروض</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {r.status !== "closed" && (
+                        {r.status !== "closed" && r.status !== "accepted" && r.status !== "cancelled" && (
                           <DropdownMenuItem onClick={() => setCloseTarget(r)}><Lock className="ml-2 size-4" /> إغلاق الطلب</DropdownMenuItem>
                         )}
-                        {(r.status === "closed" || r.status === "cancelled" || r.status === "hidden") && (
+                        {(r.status === "closed" || r.status === "cancelled") && (
                           <DropdownMenuItem onClick={() => setStatus.mutate({ id: r.id, status: "open" })}>
                             <Unlock className="ml-2 size-4" /> إعادة فتح
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => setFlagTarget(r)}><Flag className="ml-2 size-4" /> إبلاغ</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStatus.mutate({ id: r.id, status: "hidden" })}>
-                          <EyeOff className="ml-2 size-4" /> إخفاء
-                        </DropdownMenuItem>
+                        {r.reported ? (
+                          <DropdownMenuItem onClick={() => toggleReported.mutate({ id: r.id })}>
+                            <Flag className="ml-2 size-4" /> إزالة البلاغ
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem onClick={() => setFlagTarget(r)}>
+                            <Flag className="ml-2 size-4" /> إبلاغ
+                          </DropdownMenuItem>
+                        )}
+                        {r.hidden ? (
+                          <DropdownMenuItem onClick={() => toggleHidden.mutate({ id: r.id })}>
+                            <Eye className="ml-2 size-4" /> إظهار
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem onClick={() => toggleHidden.mutate({ id: r.id })}>
+                            <EyeOff className="ml-2 size-4" /> إخفاء
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => { setNoteTarget(r); setNote(r.adminNotes); }}>
                           <StickyNote className="ml-2 size-4" /> ملاحظات
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
+
                 </tr>
               ))}
             </tbody>
