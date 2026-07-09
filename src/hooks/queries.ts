@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as mock from "../services/mock-data";
+import { notify } from "@/store/notifications";
 
 const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
+
 
 export const useKPIs = () =>
   useQuery({ queryKey: ["kpis"], queryFn: async () => { await delay(); return mock.mockKPI; } });
