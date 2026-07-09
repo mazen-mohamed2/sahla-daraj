@@ -51,7 +51,6 @@ function ImportRequests() {
     (allOffers ?? []).find((o) => o.requestId === id && o.status === "accepted");
 
 
-  const offerCount = (id: string) => (allOffers ?? []).filter((o) => o.requestId === id).length;
 
   const filtered = mine.filter((r) => {
     if (status !== "all" && r.status !== status) return false;
