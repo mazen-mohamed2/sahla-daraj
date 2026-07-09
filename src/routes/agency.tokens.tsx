@@ -266,7 +266,8 @@ function Tokens() {
             columns={cols} data={history}
             statusOptions={[{ value: "شراء", label: "شراء" }, { value: "استخدام", label: "استخدام" }]}
             statusKey="type"
-            onRowClick={(row) => setDetail(row)}
+            statusKey="type"
+          />
           />
         </CardContent>
       </Card>
