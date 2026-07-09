@@ -138,11 +138,12 @@ export function OffersSheet({ request, open, onOpenChange, role = "user" }: Prop
         open={!!rejectTarget}
         onOpenChange={(o) => !o && setRejectTarget(null)}
         title="رفض العرض"
-        description="اذكر سبب الرفض ليتم إعلام المعرض."
-        reasonLabel="سبب الرفض"
-        onSubmit={async (reason) => {
+        reasons={["السعر مرتفع", "مدة التسليم طويلة", "المواصفات غير مطابقة", "الضمان غير مناسب", "سبب آخر"]}
+        submitLabel="تأكيد الرفض"
+        destructive
+        onSubmit={async ({ reason, details }) => {
           if (!rejectTarget) return;
-          await reject.mutateAsync({ offerId: rejectTarget.id, reason });
+          await reject.mutateAsync({ offerId: rejectTarget.id, reason: `${reason} — ${details}` });
           setRejectTarget(null);
         }}
       />
