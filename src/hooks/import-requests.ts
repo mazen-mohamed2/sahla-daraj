@@ -473,9 +473,11 @@ export const useRejectOffer = () => {
           priority: "medium",
         });
       }
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 // ============ Admin actions ============
 
