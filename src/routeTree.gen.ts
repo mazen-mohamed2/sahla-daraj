@@ -36,6 +36,7 @@ import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
@@ -177,6 +178,11 @@ const AdminProfileRoute = AdminProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminListingsRoute = AdminListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin/disputes'
     | '/admin/financial'
     | '/admin/listings'
+    | '/admin/notifications'
     | '/admin/profile'
     | '/admin/users'
     | '/agency/add-listing'
@@ -604,6 +616,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProfileRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/listings': {
       id: '/admin/listings'
       path: '/listings'
@@ -647,6 +666,7 @@ interface AdminRouteChildren {
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
   AdminListingsRoute: typeof AdminListingsRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -657,6 +677,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDisputesRoute: AdminDisputesRoute,
   AdminFinancialRoute: AdminFinancialRoute,
   AdminListingsRoute: AdminListingsRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
