@@ -247,10 +247,6 @@ export const useUpdateListingStatus = () => {
     },
   });
 };
-      qc.setQueryData<Listing[]>(["listings", "pending"], (old) => old?.filter((l) => l.id !== result.id));
-    },
-  });
-};
 
 export const usePurchaseTokens = () =>
   useMutation({
