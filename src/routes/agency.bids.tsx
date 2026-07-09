@@ -39,7 +39,7 @@ function Bids() {
     return map;
   }, [offers, auth.phone]);
 
-  const openRequests = (requests ?? []).filter((r) => r.status === "open" || r.status === "bidding");
+  const openRequests = (requests ?? []).filter((r) => (r.status === "open" || r.status === "bidding") && !r.hidden);
   const countries = Array.from(new Set(openRequests.map((r) => r.fromCountry).filter(Boolean))) as string[];
 
   const filtered = openRequests.filter((r) => {
@@ -48,7 +48,8 @@ function Bids() {
     return true;
   });
 
-  const offerCount = (id: string) => (offers ?? []).filter((o) => o.requestId === id).length;
+  const offerCount = (id: string) => (offers ?? []).filter((o) => o.requestId === id && o.status === "pending").length;
+
 
   return (
     <DashboardLayout title="طلبات الاستيراد المتاحة">
