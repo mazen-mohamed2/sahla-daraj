@@ -423,7 +423,7 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
         submitLabel="تأكيد الإفراج"
         successTitle="تم إتمام الصفقة"
         successMessage="تم تحويل المبلغ للمعرض بنجاح"
-        onSubmit={() => confirmDelivery.mutateAsync({ id: escrow.id })}
+        onSubmit={async () => { await confirmDelivery.mutateAsync({ id: escrow.id }); }}
       />
 
       {/* Admin release */}
@@ -434,7 +434,7 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
         reasons={["توفرت أدلة كافية للتسليم", "قرار إداري بعد التحقيق", "أخرى"]}
         submitLabel="تأكيد الإفراج"
         destructive
-        onSubmit={(p) => forceRelease.mutateAsync({ id: escrow.id, reason: p.details || p.reason })}
+        onSubmit={async (p) => { await forceRelease.mutateAsync({ id: escrow.id, reason: p.details || p.reason }); }}
       />
 
       {/* Dispute */}
@@ -448,7 +448,7 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
         submitLabel="فتح النزاع"
         successTitle="تم فتح النزاع"
         successMessage="سيتم مراجعة النزاع خلال 24 ساعة"
-        onSubmit={(p) => openDispute.mutateAsync({ id: escrow.id, reason: p.reason, description: p.details })}
+        onSubmit={async (p) => { await openDispute.mutateAsync({ id: escrow.id, reason: p.reason, description: p.details }); }}
       />
 
       {/* Refund */}
@@ -459,7 +459,7 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
         reasons={REFUND_REASONS}
         minDetails={15}
         submitLabel="إرسال الطلب"
-        onSubmit={(p) => requestRefund.mutateAsync({ id: escrow.id, reason: `${p.reason} — ${p.details}` })}
+        onSubmit={async (p) => { await requestRefund.mutateAsync({ id: escrow.id, reason: `${p.reason} — ${p.details}` }); }}
       />
 
       {/* Admin refund */}
@@ -470,7 +470,7 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
         reasons={["قرار لصالح المشتري", "توقف الصفقة", "أخرى"]}
         destructive
         submitLabel="تنفيذ الاسترداد"
-        onSubmit={(p) => forceRefund.mutateAsync({ id: escrow.id, reason: p.details || p.reason })}
+        onSubmit={async (p) => { await forceRefund.mutateAsync({ id: escrow.id, reason: p.details || p.reason }); }}
       />
 
       {/* Resolve dispute */}
