@@ -58,10 +58,10 @@ function EscrowPage() {
       </Card>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-        <KpiCard label="الإجمالي المحتجز" value={money(kpis.held)} icon={ShieldCheck} />
-        <KpiCard label="بانتظار الدفع" value={String(kpis.pending)} icon={ShoppingBag} />
-        <KpiCard label="صفقات نشطة" value={String(kpis.active)} icon={CheckCircle2} />
-        <KpiCard label="نزاعات" value={String(kpis.disputes)} icon={AlertTriangle} />
+        <KpiCard title="الإجمالي المحتجز" value={money(kpis.held)} icon={ShieldCheck} />
+        <KpiCard title="بانتظار الدفع" value={String(kpis.pending)} icon={ShoppingBag} />
+        <KpiCard title="صفقات نشطة" value={String(kpis.active)} icon={CheckCircle2} />
+        <KpiCard title="نزاعات" value={String(kpis.disputes)} icon={AlertTriangle} />
       </div>
 
       <div className="flex flex-wrap gap-2 mb-3">
