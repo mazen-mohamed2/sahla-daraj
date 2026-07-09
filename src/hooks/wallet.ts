@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNotifications } from "@/store/notifications";
+import { useAuthStore } from "@/store/auth";
+
 
 export type WalletTxType = "deposit" | "withdrawal" | "escrow_hold" | "escrow_release" | "fee";
 export type WalletTxStatus = "completed" | "pending" | "failed";
