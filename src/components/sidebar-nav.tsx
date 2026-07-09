@@ -19,6 +19,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/admin/import-requests", label: "nav.importRequests", icon: Ship },
     { to: "/admin/disputes", label: "nav.disputes", icon: Scale },
     { to: "/admin/financial", label: "nav.financial", icon: Wallet },
+    { to: "/admin/escrow", label: "nav.escrow", icon: ShoppingCart },
     { to: "/admin/agencies", label: "nav.agencies", icon: Building2 },
     { to: "/admin/profile", label: "nav.profile", icon: UserCircle },
     { to: "/admin/notifications", label: "nav.notifications", icon: Bell },

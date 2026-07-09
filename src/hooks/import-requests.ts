@@ -10,6 +10,7 @@ import {
   type ImportStatus,
   type OfferStatus,
 } from "@/services/import-data";
+import type { Escrow, EscrowTimelineEvent } from "@/services/escrow-data";
 import { notify } from "@/store/notifications";
 import { useAuthStore } from "@/store/auth";
 
@@ -370,24 +371,41 @@ export const useAcceptOffer = () => {
         ),
       );
 
-      // Create mock escrow
+      // Create mock escrow (new-shape)
       const escrowId = uid("E");
       const totalAmount = offer.price + offer.shippingCost;
-      qc.setQueryData<Array<{ id: string; listing: string; counterparty: string; amount: number; status: string; reason: string; createdAt: string }>>(
-        EK,
-        (old = []) => [
-          {
-            id: escrowId,
-            listing: `${req.brand} ${req.model} ${req.year}`,
-            counterparty: offer.agencyName,
-            amount: totalAmount,
-            status: "holding",
-            reason: "",
-            createdAt: now,
-          },
-          ...old,
-        ],
-      );
+      const commission = Math.round(offer.price * 0.025);
+      const escrowCreated: EscrowTimelineEvent = {
+        id: uid("tev"),
+        type: "created",
+        message: `تم إنشاء ضمان ${escrowId} بقيمة ${totalAmount.toLocaleString("ar-EG")} ج.م`,
+        at: now,
+        actor: "النظام",
+      };
+      qc.setQueryData<Escrow[]>(EK, (old = []) => [
+        {
+          id: escrowId,
+          requestId,
+          offerId,
+          buyerId: req.requester,
+          buyerName: req.requester,
+          agencyId: offer.agencyId ?? `AG-${offer.agencyName}`,
+          agencyName: offer.agencyName,
+          vehicle: `${req.brand} ${req.model} ${req.year}`,
+          amount: offer.price,
+          commission,
+          shippingCost: offer.shippingCost,
+          status: "pending_payment",
+          createdAt: now,
+          updatedAt: now,
+          notes: "",
+          timeline: [escrowCreated],
+          documents: [],
+          listing: `${req.brand} ${req.model} ${req.year}`,
+          counterparty: offer.agencyName,
+        },
+        ...old,
+      ]);
 
       // Close request + append timeline
       qc.setQueryData<ImportRequest[]>(RK, (old = []) =>
