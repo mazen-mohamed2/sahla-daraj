@@ -436,9 +436,11 @@ export const useAcceptOffer = () => {
         actionUrl: "/admin/financial",
         priority: "medium",
       });
+      qc.invalidateQueries({ queryKey: ["offers"] });
     },
   });
 };
+
 
 export const useRejectOffer = () => {
   const qc = useQueryClient();
