@@ -226,6 +226,11 @@ function Tokens() {
     { accessorKey: "amount", header: "المبلغ", cell: ({ row }) => row.original.amount ? money(row.original.amount) : "—" },
     { accessorKey: "status", header: "الحالة", cell: ({ row }) => <StatusBadge status={row.original.status} /> },
     { accessorKey: "date", header: "التاريخ", cell: ({ row }) => formatDate(row.original.date) },
+    { id: "actions", header: "", cell: ({ row }) => (
+      <Button variant="ghost" size="sm" onClick={() => setDetail(row.original)}>
+        <Eye className="ml-1 size-4" /> عرض
+      </Button>
+    )},
   ];
 
   return (
