@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Eye, Flag, Lock, Unlock, EyeOff, StickyNote, Package, Ship, Clock, Users } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { useImportRequestsV2, useAllOffers, useAdminSetRequestStatus, useAdminAddNote, useAuditLog } from "@/hooks/import-requests";
+import { useImportRequestsV2, useAllOffers, useAdminSetRequestStatus, useAdminAddNote, useAuditLog, useAdminToggleHidden, useAdminToggleReported } from "@/hooks/import-requests";
 import { STATUS_LABELS_AR, STATUS_VARIANTS, type ImportRequest, type ImportStatus } from "@/services/import-data";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
