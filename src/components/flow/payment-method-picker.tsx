@@ -1,9 +1,9 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Smartphone, CreditCard, Building2, Wallet } from "lucide-react";
+import { Smartphone, CreditCard, Building2, Wallet, Apple, Chrome } from "lucide-react";
 
-export type PaymentMethod = "vodafone" | "instapay" | "card" | "fawry" | "bank";
+export type PaymentMethod = "vodafone" | "instapay" | "card" | "fawry" | "bank" | "applepay" | "googlepay";
 
 export const METHOD_LABEL: Record<PaymentMethod, string> = {
   vodafone: "فودافون كاش",
@@ -11,6 +11,8 @@ export const METHOD_LABEL: Record<PaymentMethod, string> = {
   card: "بطاقة بنكية",
   fawry: "فوري",
   bank: "تحويل بنكي",
+  applepay: "Apple Pay",
+  googlepay: "Google Pay",
 };
 
 const METHOD_ICON: Record<PaymentMethod, React.ComponentType<{ className?: string }>> = {
@@ -19,21 +21,27 @@ const METHOD_ICON: Record<PaymentMethod, React.ComponentType<{ className?: strin
   card: CreditCard,
   fawry: Wallet,
   bank: Building2,
+  applepay: Apple,
+  googlepay: Chrome,
 };
 
 interface Props {
   value: PaymentMethod;
   onChange: (v: PaymentMethod) => void;
-  account: string;
-  onAccountChange: (v: string) => void;
+  account?: string;
+  onAccountChange?: (v: string) => void;
   methods?: PaymentMethod[];
   error?: string;
+  /** hide the simple single-line account field (useful when caller renders its own extended fields). */
+  hideAccountField?: boolean;
 }
 
 export function PaymentMethodPicker({
-  value, onChange, account, onAccountChange,
-  methods = ["vodafone", "instapay", "card", "fawry"], error,
+  value, onChange, account = "", onAccountChange,
+  methods = ["vodafone", "instapay", "card", "fawry"], error, hideAccountField,
 }: Props) {
+  const noInputMethods: PaymentMethod[] = ["applepay", "googlepay"];
+  const showInput = !hideAccountField && !noInputMethods.includes(value);
   const inputLabel = value === "card" ? "رقم البطاقة" : value === "bank" ? "رقم الحساب / IBAN" : "رقم المحفظة";
   const placeholder = value === "card" ? "0000 0000 0000 0000" : value === "bank" ? "EG00 0000 0000 0000" : "+20 100 000 0000";
 
@@ -62,11 +70,18 @@ export function PaymentMethodPicker({
           })}
         </div>
       </div>
-      <div>
-        <Label>{inputLabel}</Label>
-        <Input value={account} onChange={(e) => onAccountChange(e.target.value)} placeholder={placeholder} inputMode={value === "card" ? "numeric" : "tel"} />
-        {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      </div>
+      {showInput && onAccountChange && (
+        <div>
+          <Label>{inputLabel}</Label>
+          <Input value={account} onChange={(e) => onAccountChange(e.target.value)} placeholder={placeholder} inputMode={value === "card" ? "numeric" : "tel"} />
+          {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+        </div>
+      )}
+      {noInputMethods.includes(value) && (
+        <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
+          سيتم فتح نافذة {METHOD_LABEL[value]} لتأكيد الدفع بشكل آمن.
+        </div>
+      )}
     </div>
   );
 }
