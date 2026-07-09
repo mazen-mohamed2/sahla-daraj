@@ -65,6 +65,12 @@ export const useUpdateUserStatus = () => {
       qc.setQueryData<User[]>(["users"], (old) =>
         old?.map((u) => (u.id === result.id ? { ...u, ...(result.status ? { status: result.status as User["status"] } : {}), ...(result.verified !== undefined ? { verified: result.verified } : {}) } : u)),
       );
+      if (result.status === "banned") {
+        notify("admin", { title: "تم حظر مستخدم", message: `تم حظر المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "medium" });
+      } else if (result.verified) {
+        notify("admin", { title: "تم توثيق مستخدم", message: `تم توثيق المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "low" });
+        notify("user", { title: "تم توثيق حسابك", message: "تمت الموافقة على طلب التوثيق (KYC)", category: "account", relatedEntityType: "kyc", actionUrl: "/user/profile", priority: "high" });
+      }
     },
   });
 };
