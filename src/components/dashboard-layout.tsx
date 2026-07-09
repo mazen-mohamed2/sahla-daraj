@@ -142,50 +142,79 @@ export function DashboardLayout({ children, title, headerAction }: { children: R
             </SelectContent>
           </Select>
 
-          <Popover>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button variant="ghost" size="icon" className="relative" aria-label={lang === "ar" ? "الإشعارات" : "Notifications"}>
                 <Bell className="size-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 size-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
-                    {unreadCount}
+                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-80 p-0" dir="rtl">
-              <div className="border-b p-4 flex items-center justify-between">
-                <span className="font-semibold">الإشعارات</span>
-                <Button variant="ghost" size="sm" onClick={markAllRead}>تحديد الكل كمقروء</Button>
+            <PopoverContent align="end" className="w-96 p-0" dir={lang === "ar" ? "rtl" : "ltr"}>
+              <div className="border-b p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-sm">{lang === "ar" ? "الإشعارات" : "Notifications"}</span>
+                  {unreadCount > 0 && <Badge variant="secondary" className="text-[10px]">{unreadCount}</Badge>}
+                </div>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => markAllRead(role)} disabled={unreadCount === 0}>
+                  {lang === "ar" ? "تحديد الكل كمقروء" : "Mark all read"}
+                </Button>
               </div>
-              <ScrollArea className="h-80">
-                {notifications.map((n) => (
-                  <div key={n.id} onClick={() => markRead(n.id)}
-                    className={cn("flex gap-3 p-3 border-b last:border-0 cursor-pointer hover:bg-muted/50", !n.read && "bg-primary/5")}>
-                    <div className={cn("size-8 rounded-full flex items-center justify-center shrink-0",
-                      n.type === "escrow" && "bg-warning/20 text-warning",
-                      n.type === "message" && "bg-primary/20 text-primary",
-                      n.type === "dispute" && "bg-destructive/20 text-destructive",
-                      n.type === "system" && "bg-muted text-muted-foreground")}>
-                      {n.type === "escrow" && <ShieldCheck className="size-4" />}
-                      {n.type === "message" && <MessageCircle className="size-4" />}
-                      {n.type === "dispute" && <AlertTriangle className="size-4" />}
-                      {n.type === "system" && <Bell className="size-4" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium leading-snug">{n.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{n.body}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{n.time}</p>
-                    </div>
-                    {!n.read && <div className="size-2 rounded-full bg-primary shrink-0 mt-1" />}
+              <ScrollArea className="h-[380px]">
+                {feed.length === 0 ? (
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    <Bell className="size-8 mx-auto mb-2 opacity-30" />
+                    {lang === "ar" ? "لا توجد إشعارات" : "No notifications yet"}
                   </div>
-                ))}
+                ) : grouped.map(([cat, items]) => {
+                  const Icon = CAT_ICON[cat];
+                  const unread = items.filter((n) => !n.read).length;
+                  const latest = items.slice(0, 3);
+                  return (
+                    <div key={cat} className="border-b last:border-0">
+                      <div className="flex items-center justify-between px-3 py-2 bg-muted/40 sticky top-0">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("size-6 rounded-md flex items-center justify-center", CAT_CLASS[cat])}>
+                            <Icon className="size-3.5" />
+                          </div>
+                          <span className="text-xs font-semibold">{catLabels[cat]}</span>
+                          {unread > 0 && <Badge variant="destructive" className="text-[9px] h-4 px-1.5">{unread}</Badge>}
+                        </div>
+                      </div>
+                      {latest.map((n) => (
+                        <button
+                          key={n.id}
+                          onClick={() => { setSelected(n); setPopoverOpen(false); }}
+                          className={cn(
+                            "w-full text-start flex gap-3 p-3 border-t first:border-t-0 hover:bg-muted/50 transition-colors focus:outline-none focus:bg-muted/50",
+                            !n.read && "bg-primary/5",
+                          )}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium leading-snug line-clamp-1">{n.title}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">{formatRelative(n.createdAt, lang)}</p>
+                          </div>
+                          {!n.read && <div className="size-2 rounded-full bg-primary shrink-0 mt-1.5" />}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
               </ScrollArea>
               <div className="p-2 border-t">
-                <Button variant="ghost" className="w-full text-sm">عرض كل الإشعارات</Button>
+                <Button variant="ghost" className="w-full text-sm" onClick={() => { setPopoverOpen(false); navigate({ to: `/${role}/notifications` }); }}>
+                  {lang === "ar" ? "عرض كل الإشعارات" : "View all notifications"}
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
+
+          <NotificationDialog notification={selected} onOpenChange={(o) => !o && setSelected(null)} />
+
 
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="transition-all active:scale-95">
             {theme === "light" ? <Moon className="size-5" /> : <Sun className="size-5" />}
