@@ -20,6 +20,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserSettingsRouteImport } from './routes/user.settings'
 import { Route as UserProfileRouteImport } from './routes/user.profile'
+import { Route as UserNotificationsRouteImport } from './routes/user.notifications'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
 import { Route as UserImportRequestsRouteImport } from './routes/user.import-requests'
 import { Route as UserFavoritesRouteImport } from './routes/user.favorites'
@@ -93,6 +94,11 @@ const UserSettingsRoute = UserSettingsRouteImport.update({
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserNotificationsRoute = UserNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => UserRoute,
 } as any)
 const UserListingsRoute = UserListingsRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/user/favorites': typeof UserFavoritesRoute
   '/user/import-requests': typeof UserImportRequestsRoute
   '/user/listings': typeof UserListingsRouteWithChildren
+  '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/user/favorites'
     | '/user/import-requests'
     | '/user/listings'
+    | '/user/notifications'
     | '/user/profile'
     | '/user/settings'
     | '/user/wallet'
@@ -466,6 +478,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/user/profile'
       preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/notifications': {
+      id: '/user/notifications'
+      path: '/notifications'
+      fullPath: '/user/notifications'
+      preLoaderRoute: typeof UserNotificationsRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/listings': {
@@ -668,6 +687,7 @@ interface UserRouteChildren {
   UserFavoritesRoute: typeof UserFavoritesRoute
   UserImportRequestsRoute: typeof UserImportRequestsRoute
   UserListingsRoute: typeof UserListingsRouteWithChildren
+  UserNotificationsRoute: typeof UserNotificationsRoute
   UserProfileRoute: typeof UserProfileRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserWalletRoute: typeof UserWalletRoute
@@ -681,6 +701,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserFavoritesRoute: UserFavoritesRoute,
   UserImportRequestsRoute: UserImportRequestsRoute,
   UserListingsRoute: UserListingsRouteWithChildren,
+  UserNotificationsRoute: UserNotificationsRoute,
   UserProfileRoute: UserProfileRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserWalletRoute: UserWalletRoute,
