@@ -238,6 +238,16 @@ export const useUpdateListingStatus = () => {
         old?.map((l) => (l.id === result.id ? { ...l, status: result.status as Listing["status"] } : l)),
       );
       qc.setQueryData<Listing[]>(["listings", "pending"], (old) => old?.filter((l) => l.id !== result.id));
+      const approved = result.status === "active" || result.status === "approved";
+      const title = approved ? "تم قبول إعلانك" : result.status === "rejected" ? "تم رفض إعلانك" : "تم تحديث حالة الإعلان";
+      // notify both user and agency feeds; sidebar shows per active role
+      for (const r of ["user", "agency"] as const) {
+        notify(r, { title, message: `الإعلان ${result.id}`, category: "listings", relatedEntityType: "listing", relatedEntityId: result.id, actionUrl: `/${r}/listings`, priority: "medium" });
+      }
+    },
+  });
+};
+      qc.setQueryData<Listing[]>(["listings", "pending"], (old) => old?.filter((l) => l.id !== result.id));
     },
   });
 };
