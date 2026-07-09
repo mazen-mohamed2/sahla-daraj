@@ -266,8 +266,6 @@ function Tokens() {
             columns={cols} data={history}
             statusOptions={[{ value: "شراء", label: "شراء" }, { value: "استخدام", label: "استخدام" }]}
             statusKey="type"
-            statusKey="type"
-          />
           />
         </CardContent>
       </Card>
