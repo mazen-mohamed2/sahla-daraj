@@ -48,9 +48,14 @@ function AdminImportRequests() {
 
   const offersByReq = useMemo(() => {
     const m = new Map<string, number>();
-    (offers ?? []).forEach((o) => m.set(o.requestId, (m.get(o.requestId) ?? 0) + 1));
+    (offers ?? []).forEach((o) => {
+      if (o.status === "pending" || o.status === "accepted") {
+        m.set(o.requestId, (m.get(o.requestId) ?? 0) + 1);
+      }
+    });
     return m;
   }, [offers]);
+
 
   const stats = useMemo(() => {
     const list = data ?? [];
