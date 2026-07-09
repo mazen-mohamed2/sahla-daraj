@@ -20,6 +20,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/admin/financial", label: "nav.financial", icon: Wallet },
     { to: "/admin/agencies", label: "nav.agencies", icon: Building2 },
     { to: "/admin/profile", label: "nav.profile", icon: UserCircle },
+    { to: "/admin/notifications", label: "nav.notifications", icon: Bell },
   ],
   agency: [
     { to: "/agency", label: "nav.overview", icon: LayoutDashboard, exact: true },
@@ -29,6 +30,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/agency/tokens", label: "nav.tokens", icon: Coins },
     { to: "/agency/bids", label: "nav.bids", icon: PackageCheck },
     { to: "/agency/chat", label: "nav.chat", icon: MessagesSquare },
+    { to: "/agency/notifications", label: "nav.notifications", icon: Bell },
   ],
   user: [
     { to: "/user", label: "nav.overview", icon: LayoutDashboard, exact: true },
@@ -39,6 +41,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/user/import-requests", label: "nav.importRequests", icon: Ship },
     { to: "/user/favorites", label: "nav.favorites", icon: Heart },
     { to: "/user/chat", label: "nav.chat", icon: MessagesSquare },
+    { to: "/user/notifications", label: "nav.notifications", icon: Bell },
     { to: "/user/profile", label: "nav.profile", icon: UserCircle },
     { to: "/user/settings", label: "nav.settings", icon: Settings },
   ],
