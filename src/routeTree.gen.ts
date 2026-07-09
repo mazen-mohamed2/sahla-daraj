@@ -31,6 +31,7 @@ import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
 import { Route as AgencyNotificationsRouteImport } from './routes/agency.notifications'
 import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
+import { Route as AgencyEscrowRouteImport } from './routes/agency.escrow'
 import { Route as AgencyChatRouteImport } from './routes/agency.chat'
 import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
@@ -154,6 +155,11 @@ const AgencyInventoryRoute = AgencyInventoryRouteImport.update({
   path: '/inventory',
   getParentRoute: () => AgencyRoute,
 } as any)
+const AgencyEscrowRoute = AgencyEscrowRouteImport.update({
+  id: '/escrow',
+  path: '/escrow',
+  getParentRoute: () => AgencyRoute,
+} as any)
 const AgencyChatRoute = AgencyChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
   '/agency/chat': typeof AgencyChatRoute
+  '/agency/escrow': typeof AgencyEscrowRoute
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
@@ -340,6 +349,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -373,6 +383,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -409,6 +420,7 @@ export interface FileRouteTypes {
     | '/agency/add-listing'
     | '/agency/bids'
     | '/agency/chat'
+    | '/agency/escrow'
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
@@ -593,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencyInventoryRouteImport
       parentRoute: typeof AgencyRoute
     }
+    '/agency/escrow': {
+      id: '/agency/escrow'
+      path: '/escrow'
+      fullPath: '/agency/escrow'
+      preLoaderRoute: typeof AgencyEscrowRouteImport
+      parentRoute: typeof AgencyRoute
+    }
     '/agency/chat': {
       id: '/agency/chat'
       path: '/chat'
@@ -710,6 +729,7 @@ interface AgencyRouteChildren {
   AgencyAddListingRoute: typeof AgencyAddListingRoute
   AgencyBidsRoute: typeof AgencyBidsRoute
   AgencyChatRoute: typeof AgencyChatRoute
+  AgencyEscrowRoute: typeof AgencyEscrowRoute
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyListingsRoute: typeof AgencyListingsRoute
   AgencyNotificationsRoute: typeof AgencyNotificationsRoute
@@ -721,6 +741,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyAddListingRoute: AgencyAddListingRoute,
   AgencyBidsRoute: AgencyBidsRoute,
   AgencyChatRoute: AgencyChatRoute,
+  AgencyEscrowRoute: AgencyEscrowRoute,
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyListingsRoute: AgencyListingsRoute,
   AgencyNotificationsRoute: AgencyNotificationsRoute,
