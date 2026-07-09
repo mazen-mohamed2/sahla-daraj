@@ -39,12 +39,17 @@ function ImportRequests() {
   const [status, setStatus] = useState<ImportStatus | "all">("all");
 
   const mine = useMemo(() => {
-    const list = data ?? [];
-    // Show requests owned by this user + the first 4 seeded (so demo isn't empty)
+    const list = (data ?? []).filter((r) => !r.hidden);
     const owned = list.filter((r) => r.requesterId === auth.phone);
     const seed = list.filter((r) => r.requesterId !== auth.phone).slice(0, 4);
     return [...owned, ...seed];
   }, [data, auth.phone]);
+
+  const activeOfferCount = (id: string) =>
+    (allOffers ?? []).filter((o) => o.requestId === id && (o.status === "pending" || o.status === "accepted")).length;
+  const acceptedOfferOf = (id: string) =>
+    (allOffers ?? []).find((o) => o.requestId === id && o.status === "accepted");
+
 
   const offerCount = (id: string) => (allOffers ?? []).filter((o) => o.requestId === id).length;
 
