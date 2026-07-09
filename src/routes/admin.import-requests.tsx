@@ -32,6 +32,9 @@ function AdminImportRequests() {
   const { data: audit } = useAuditLog();
   const setStatus = useAdminSetRequestStatus();
   const addNote = useAdminAddNote();
+  const toggleHidden = useAdminToggleHidden();
+  const toggleReported = useAdminToggleReported();
+
 
   const [q, setQ] = useState("");
   const [status, setStatus_, ] = useState<ImportStatus | "all">("all");
