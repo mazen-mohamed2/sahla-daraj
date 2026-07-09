@@ -3,7 +3,7 @@ import { useNotifications } from "@/store/notifications";
 
 export type WalletTxType = "deposit" | "withdrawal" | "escrow_hold" | "escrow_release" | "fee";
 export type WalletTxStatus = "completed" | "pending" | "failed";
-export type WalletMethod = "card" | "bank" | "applepay" | "googlepay" | "vodafone" | "instapay";
+export type WalletMethod = "card" | "bank" | "applepay" | "googlepay" | "vodafone" | "instapay" | "fawry";
 
 export interface WalletTx {
   id: string;
