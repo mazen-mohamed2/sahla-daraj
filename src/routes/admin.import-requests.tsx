@@ -259,9 +259,10 @@ function AdminImportRequests() {
         destructive
         onSubmit={async ({ reason, details }) => {
           if (!flagTarget) return;
-          await setStatus.mutateAsync({ id: flagTarget.id, status: "flagged", reason: `${reason} — ${details}` });
+          await toggleReported.mutateAsync({ id: flagTarget.id, reason: `${reason}${details ? ` — ${details}` : ""}` });
           setFlagTarget(null);
         }}
+
       />
 
       <Dialog open={!!noteTarget} onOpenChange={(o) => !o && setNoteTarget(null)}>
