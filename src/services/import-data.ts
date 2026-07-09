@@ -64,6 +64,10 @@ export interface ImportRequest {
   acceptedOfferId?: string;
   escrowId?: string;
   flagReason?: string;
+  hidden?: boolean;
+  reported?: boolean;
+  reportReason?: string;
+
 }
 
 export interface Offer {
