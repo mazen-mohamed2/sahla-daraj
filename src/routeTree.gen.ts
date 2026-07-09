@@ -38,6 +38,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminImportRequestsRouteImport } from './routes/admin.import-requests'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
@@ -188,6 +189,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminImportRequestsRoute = AdminImportRequestsRouteImport.update({
+  id: '/import-requests',
+  path: '/import-requests',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFinancialRoute = AdminFinancialRouteImport.update({
   id: '/financial',
   path: '/financial',
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
+  '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
+  '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/admin/agencies': typeof AdminAgenciesRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/financial': typeof AdminFinancialRoute
+  '/admin/import-requests': typeof AdminImportRequestsRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -323,6 +332,7 @@ export interface FileRouteTypes {
     | '/admin/agencies'
     | '/admin/disputes'
     | '/admin/financial'
+    | '/admin/import-requests'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/admin/agencies'
     | '/admin/disputes'
     | '/admin/financial'
+    | '/admin/import-requests'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -390,6 +401,7 @@ export interface FileRouteTypes {
     | '/admin/agencies'
     | '/admin/disputes'
     | '/admin/financial'
+    | '/admin/import-requests'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -630,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/import-requests': {
+      id: '/admin/import-requests'
+      path: '/import-requests'
+      fullPath: '/admin/import-requests'
+      preLoaderRoute: typeof AdminImportRequestsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/financial': {
       id: '/admin/financial'
       path: '/financial'
@@ -665,6 +684,7 @@ interface AdminRouteChildren {
   AdminAgenciesRoute: typeof AdminAgenciesRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
+  AdminImportRequestsRoute: typeof AdminImportRequestsRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
@@ -676,6 +696,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAgenciesRoute: AdminAgenciesRoute,
   AdminDisputesRoute: AdminDisputesRoute,
   AdminFinancialRoute: AdminFinancialRoute,
+  AdminImportRequestsRoute: AdminImportRequestsRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,

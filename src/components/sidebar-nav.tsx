@@ -16,6 +16,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/admin", label: "nav.overview", icon: LayoutDashboard, exact: true },
     { to: "/admin/users", label: "nav.users", icon: Users },
     { to: "/admin/listings", label: "nav.listings", icon: Car },
+    { to: "/admin/import-requests", label: "nav.importRequests", icon: Ship },
     { to: "/admin/disputes", label: "nav.disputes", icon: Scale },
     { to: "/admin/financial", label: "nav.financial", icon: Wallet },
     { to: "/admin/agencies", label: "nav.agencies", icon: Building2 },
