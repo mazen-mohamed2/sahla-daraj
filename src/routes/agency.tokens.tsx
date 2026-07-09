@@ -209,7 +209,7 @@ function Tokens() {
       setBalance((b) => b + pkg.tokens);
       setHistory((h) => [tx, ...h]);
       setLastTx(tx);
-      notify({ type: "system", title: "تم شراء رصيد التوكن", body: `تمت إضافة ${pkg.tokens} توكن (${pkg.name}) إلى حسابك` });
+      notify("agency", { title: "تم شراء رصيد التوكن", message: `تمت إضافة ${pkg.tokens} توكن (${pkg.name}) إلى حسابك`, category: "wallet", relatedEntityType: "token_tx", relatedEntityId: tx.id, actionUrl: "/agency/tokens", priority: "medium" });
       toast.success(`✅ تم شراء ${pkg.tokens} توكن`);
     }
   };
