@@ -1,5 +1,5 @@
-import { type ReactNode } from "react";
-import { Menu, Moon, Sun, Bell, Search, LogOut, Languages, ShieldCheck, MessageCircle, AlertTriangle } from "lucide-react";
+import { type ReactNode, useMemo, useState } from "react";
+import { Menu, Moon, Sun, Bell, Search, LogOut, Languages, ShieldCheck, MessageCircle, AlertTriangle, Wallet as WalletIcon, Car as CarIcon, Ship as ShipIcon, UserCog, Info } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,21 +7,65 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import { SidebarNav } from "./sidebar-nav";
+import { NotificationDialog } from "./notification-dialog";
 import { useAuthStore } from "@/store/auth";
 import { useUIStore } from "@/store/ui";
-import { useNotifications } from "@/store/notifications";
+import {
+  useNotifications,
+  type AppNotification,
+  type NotifCategory,
+  CATEGORY_LABELS_AR,
+  CATEGORY_LABELS_EN,
+  formatRelative,
+} from "@/store/notifications";
 import { Car } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { Currency } from "@/lib/format";
 
+const CAT_ICON: Record<NotifCategory, typeof Bell> = {
+  escrow: ShieldCheck,
+  listings: CarIcon,
+  messages: MessageCircle,
+  import: ShipIcon,
+  wallet: WalletIcon,
+  account: UserCog,
+  system: Info,
+};
+const CAT_CLASS: Record<NotifCategory, string> = {
+  escrow: "bg-warning/20 text-warning",
+  listings: "bg-primary/20 text-primary",
+  messages: "bg-primary/20 text-primary",
+  import: "bg-info/20 text-info",
+  wallet: "bg-success/20 text-success",
+  account: "bg-muted text-muted-foreground",
+  system: "bg-muted text-muted-foreground",
+};
+
 export function DashboardLayout({ children, title, headerAction }: { children: ReactNode; title: string; headerAction?: ReactNode }) {
   const { role, name, avatar, avatarColor, logout } = useAuthStore();
   const { theme, toggleTheme, lang, toggleLang, currency, setCurrency } = useUIStore();
-  const { items: notifications, markAllRead, markRead } = useNotifications();
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const feed = useNotifications((s) => s.feeds[role]);
+  const markAllRead = useNotifications((s) => s.markAllRead);
+  const unreadCount = feed.filter((n) => !n.read).length;
+  const [selected, setSelected] = useState<AppNotification | null>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const grouped = useMemo(() => {
+    const map = new Map<NotifCategory, AppNotification[]>();
+    for (const n of feed) {
+      const arr = map.get(n.category) ?? [];
+      arr.push(n);
+      map.set(n.category, arr);
+    }
+    return Array.from(map.entries());
+  }, [feed]);
+
+  const catLabels = lang === "ar" ? CATEGORY_LABELS_AR : CATEGORY_LABELS_EN;
+
   const navigate = useNavigate();
 
   const roleLabel = t(`role.${role}`, lang);
