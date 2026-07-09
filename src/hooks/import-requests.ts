@@ -95,17 +95,17 @@ export const useAllOffers = () => {
   });
 };
 
-export const useAuditLog = () =>
-  useQuery({
+export const useAuditLog = () => {
+  const qc = useQueryClient();
+  return useQuery({
     queryKey: AK,
     queryFn: async () => {
       await delay();
-      return (
-        (useAuthStore.getState() && (undefined as unknown)) ??
-        (seedAuditLog() as AuditLog[])
-      );
+      ensureSeeded(qc);
+      return qc.getQueryData<AuditLog[]>(AK) ?? seedAuditLog();
     },
   });
+};
 
 type CreateInput = Omit<
   ImportRequest,
