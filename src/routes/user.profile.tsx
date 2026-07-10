@@ -13,6 +13,7 @@ import { useUIStore } from "@/store/ui";
 import { EG_CITIES, AVATAR_COLORS } from "@/store/settings";
 import { t } from "@/lib/i18n";
 import { Pencil, Car, ShieldCheck, Calendar } from "lucide-react";
+import { KycCard } from "@/components/kyc/kyc-card";
 import { toast } from "sonner";
 
 function ProfileView({ admin = false }: { admin?: boolean }) {
