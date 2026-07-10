@@ -17,6 +17,7 @@ import { useAuthStore } from "@/store/auth";
 import { OfferDialog } from "@/components/import/offer-dialog";
 import { RequestDetailsDialog } from "@/components/import/request-details-dialog";
 import { ConfirmDialog } from "@/components/flow";
+import { StartChatButton } from "@/components/chat/start-chat-button";
 
 export const Route = createFileRoute("/agency/bids")({ component: Bids });
 
@@ -128,7 +129,7 @@ function Bids() {
                       </Button>
                       <StartChatButton
                         peer={{ id: `user:${r.requester}`, name: r.requester, role: "user", avatarColor: "#2563eb" }}
-                        related={{ kind: "import_request", id: r.id, label: `${r.brand} ${r.model} ${r.year}`, meta: { budget: r.budgetMax } }}
+                        related={{ kind: "import_request", id: r.id, label: `${r.brand} ${r.model} ${r.year}`, meta: { budget: r.budget } }}
                         label="محادثة"
                         className="flex-1"
                       />
