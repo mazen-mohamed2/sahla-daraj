@@ -58,7 +58,12 @@ interface Props {
   role: Role;
   open: boolean;
   onOpenChange: (o: boolean) => void;
+  /** Fired AFTER the user's delivery-confirmation dialog fully closes and
+   *  the escrow is released — so the parent can open the review dialog
+   *  without stacking modal overlays. */
+  onDeliveryConfirmed?: (escrow: Escrow) => void;
 }
+
 
 const DISPUTE_REASONS = [
   "عدم مطابقة الوصف",
@@ -76,8 +81,9 @@ const REFUND_REASONS = [
   "أخرى",
 ];
 
-export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props) {
+export function EscrowDetailsDialog({ escrow, role, open, onOpenChange, onDeliveryConfirmed }: Props) {
   const money = useMoney();
+  const [releaseJustConfirmed, setReleaseJustConfirmed] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [disputeOpen, setDisputeOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
@@ -416,15 +422,27 @@ export function EscrowDetailsDialog({ escrow, role, open, onOpenChange }: Props)
       {/* User release confirmation */}
       <ReasonDialog
         open={releaseOpen && role === "user"}
-        onOpenChange={setReleaseOpen}
+        onOpenChange={(o) => {
+          setReleaseOpen(o);
+          // When the release dialog fully closes AFTER a successful confirm,
+          // close the details dialog first, THEN hand off to the parent so
+          // it can open the review dialog with no overlay stacking.
+          if (!o && releaseJustConfirmed && escrow) {
+            setReleaseJustConfirmed(false);
+            const target = escrow;
+            onOpenChange(false);
+            setTimeout(() => onDeliveryConfirmed?.(target), 250);
+          }
+        }}
         title="تأكيد الاستلام والإفراج"
         reasons={["استلمت السيارة والحالة مطابقة", "استلمت بعد فحص فني", "أخرى"]}
         minDetails={0}
         submitLabel="تأكيد الإفراج"
         successTitle="تم إتمام الصفقة"
         successMessage="تم تحويل المبلغ للمعرض بنجاح"
-        onSubmit={async () => { await confirmDelivery.mutateAsync({ id: escrow.id }); }}
+        onSubmit={async () => { await confirmDelivery.mutateAsync({ id: escrow.id }); setReleaseJustConfirmed(true); }}
       />
+
 
       {/* Admin release */}
       <ReasonDialog
