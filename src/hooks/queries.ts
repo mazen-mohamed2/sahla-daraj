@@ -67,9 +67,14 @@ export const useUpdateUserStatus = () => {
       );
       if (result.status === "banned") {
         notify("admin", { title: "تم حظر مستخدم", message: `تم حظر المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "medium" });
-      } else if (result.verified) {
+        audit({ action: "ban_user", entity: "user", entityId: result.id });
+      } else if (result.status === "active") {
+        audit({ action: "unban_user", entity: "user", entityId: result.id });
+      }
+      if (result.verified) {
         notify("admin", { title: "تم توثيق مستخدم", message: `تم توثيق المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "low" });
         notify("user", { title: "تم توثيق حسابك", message: "تمت الموافقة على طلب التوثيق (KYC)", category: "account", relatedEntityType: "kyc", actionUrl: "/user/profile", priority: "high" });
+        audit({ action: "verify_user", entity: "user", entityId: result.id });
       }
     },
   });
