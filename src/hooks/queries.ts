@@ -235,6 +235,7 @@ export const useUpdateListingStatus = () => {
       for (const r of ["user", "agency"] as const) {
         notify(r, { title, message: `الإعلان ${result.id}`, category: "listings", relatedEntityType: "listing", relatedEntityId: result.id, actionUrl: `/${r}/listings`, priority: "medium" });
       }
+      audit({ action: approved ? "approve_listing" : result.status === "rejected" ? "reject_listing" : `listing_${result.status}`, entity: "listing", entityId: result.id });
     },
   });
 };
