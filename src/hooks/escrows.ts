@@ -356,6 +356,7 @@ export const useForceReleaseEscrow = () => {
       }));
       notify("agency", { title: "إفراج إجباري", message: `تم إفراج ضمان ${id} من الإدارة`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
       notify("user", { title: "قرار الإدارة", message: `تم إفراج ضمان ${id} لصالح المعرض${reason ? ` — ${reason}` : ""}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
+      audit({ action: "force_release_escrow", entity: "escrow", entityId: id, meta: reason });
     },
   });
 };
