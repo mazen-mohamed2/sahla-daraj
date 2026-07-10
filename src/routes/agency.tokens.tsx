@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { usePersistedState } from "@/lib/persist";
+
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
