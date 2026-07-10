@@ -21,6 +21,8 @@ const translations: Record<string, { ar: string; en: string }> = {
   "nav.profile": { ar: "الملف الشخصي", en: "Profile" },
  "nav.settings": { ar: "الإعدادات", en: "Settings" },
  "nav.notifications": { ar: "الإشعارات", en: "Notifications" },
+ "nav.kyc": { ar: "توثيق الهوية", en: "KYC" },
+ "nav.audit": { ar: "سجل الأنشطة", en: "Audit Log" },
   "common.search": { ar: "بحث...", en: "Search..." },
   "common.save": { ar: "حفظ", en: "Save" },
   "common.cancel": { ar: "إلغاء", en: "Cancel" },
