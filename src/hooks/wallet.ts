@@ -43,19 +43,32 @@ const seedBalance: WalletBalance = { available: 45300, pending: 5000, total: 503
 
 const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
 
-export const useWallet = () =>
-  useQuery({
+export const useWallet = () => {
+  const qc = useQueryClient();
+  return useQuery({
     queryKey: TX_KEY,
-    queryFn: async () => { await delay(500); return seedTx; },
+    queryFn: async () => {
+      await delay(300);
+      // Persisted cache wins over the seed so a refresh keeps every
+      // transaction the user has ever made.
+      return qc.getQueryData<WalletTx[]>(TX_KEY) ?? seedTx;
+    },
     staleTime: Infinity,
   });
+};
 
-export const useWalletBalance = () =>
-  useQuery({
+export const useWalletBalance = () => {
+  const qc = useQueryClient();
+  return useQuery({
     queryKey: BAL_KEY,
-    queryFn: async () => { await delay(400); return seedBalance; },
+    queryFn: async () => {
+      await delay(300);
+      return qc.getQueryData<WalletBalance>(BAL_KEY) ?? seedBalance;
+    },
     staleTime: Infinity,
   });
+};
+
 
 /** Add a wallet transaction AND update balance atomically via setQueryData. */
 export function useCommitWalletTx() {
