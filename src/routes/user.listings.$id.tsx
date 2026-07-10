@@ -227,10 +227,7 @@ function ListingDetailPage() {
             <CardHeader><CardTitle className="font-display text-base">{lang === "ar" ? "البائع" : "Seller"}</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="font-semibold">{detail.seller.name}</div>
-              <div className="flex items-center gap-1 text-sm">
-                <Star className="size-4 fill-warning text-warning" /> {detail.seller.rating}
-                <span className="text-muted-foreground ms-2">· {detail.seller.sales} {lang === "ar" ? "صفقة" : "sales"}</span>
-              </div>
+              <ReputationBlock subjectId={detail.seller.name} subjectName={detail.seller.name} completedDeals={detail.seller.sales} maxRecent={2} />
               <StartChatButton
                 peer={{ id: `agency:${detail.seller.name}`, name: detail.seller.name, role: "agency", avatarColor: "#059669" }}
                 related={{ kind: "listing", id: detail.id, label: `${detail.make} ${detail.model} ${detail.year}`, meta: { price: detail.price } }}
