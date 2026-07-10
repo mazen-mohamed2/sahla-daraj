@@ -146,6 +146,7 @@ export const useUpdateAgencyStatus = () => {
       const approved = result.status === "approved";
       notify("agency", { title: approved ? "تمت الموافقة على معرضك" : "تم رفض طلب اعتماد المعرض", message: approved ? "أصبح بإمكانك النشر الآن" : (result.reason ?? "يرجى مراجعة الشروط"), category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/agency", priority: "high" });
       notify("admin", { title: approved ? "تم اعتماد معرض" : "تم رفض معرض", message: `المعرض ${result.id}`, category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/admin/agencies", priority: "low" });
+      audit({ action: approved ? "approve_agency" : "reject_agency", entity: "agency", entityId: result.id, meta: result.reason });
     },
   });
 };
