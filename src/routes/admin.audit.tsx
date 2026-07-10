@@ -76,7 +76,7 @@ function AuditPage() {
 
   const headerAction = (
     <div className="flex gap-2">
-      <Button size="sm" variant="outline" onClick={() => exportCSV(filtered, "audit-log")}>
+      <Button size="sm" variant="outline" onClick={() => exportCSV(filtered as unknown as Record<string, unknown>[], "audit-log")}>
         <Download className="ml-1 size-4" /> تصدير CSV
       </Button>
       <Button size="sm" variant="ghost" className="text-destructive" onClick={() => {

@@ -44,6 +44,7 @@ import { Route as AdminImportRequestsRouteImport } from './routes/admin.import-r
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminEscrowRouteImport } from './routes/admin.escrow'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
+import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as UserListingsIdRouteImport } from './routes/user.listings.$id'
 
@@ -222,6 +223,11 @@ const AdminDisputesRoute = AdminDisputesRouteImport.update({
   path: '/disputes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuditRoute = AdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgenciesRoute = AdminAgenciesRouteImport.update({
   id: '/agencies',
   path: '/agencies',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
@@ -357,6 +366,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/user'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/user'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
@@ -720,6 +732,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDisputesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/audit': {
+      id: '/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agencies': {
       id: '/admin/agencies'
       path: '/agencies'
@@ -739,6 +758,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgenciesRoute: typeof AdminAgenciesRoute
+  AdminAuditRoute: typeof AdminAuditRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminEscrowRoute: typeof AdminEscrowRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
@@ -753,6 +773,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgenciesRoute: AdminAgenciesRoute,
+  AdminAuditRoute: AdminAuditRoute,
   AdminDisputesRoute: AdminDisputesRoute,
   AdminEscrowRoute: AdminEscrowRoute,
   AdminFinancialRoute: AdminFinancialRoute,
