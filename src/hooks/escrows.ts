@@ -406,6 +406,7 @@ export const useResolveDispute = () => {
       const title = status === "resolved" ? "تم حل النزاع" : status === "rejected" ? "تم رفض النزاع" : "تحديث النزاع";
       notify("user", { title, message: `النزاع ${id}${resolution ? ` — ${resolution}` : ""}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
       notify("agency", { title, message: `النزاع على الضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
+      audit({ action: `dispute_${status}`, entity: "dispute", entityId: id, meta: resolution });
     },
   });
 };
