@@ -106,6 +106,9 @@ export const useUpdateDisputeStatus = () => {
       );
       if (result.status === "resolved" || result.status === "rejected") {
         notify("user", { title: result.status === "resolved" ? "تم حل النزاع" : "تم رفض النزاع", message: `النزاع ${result.id}${result.note ? ` — ${result.note}` : ""}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: result.id, actionUrl: "/user/escrow", priority: "high" });
+        audit({ action: result.status === "resolved" ? "resolve_dispute" : "reject_dispute", entity: "dispute", entityId: result.id, meta: result.note });
+      } else if (result.status === "escalated") {
+        audit({ action: "escalate_dispute", entity: "dispute", entityId: result.id, meta: result.note });
       }
     },
   });
