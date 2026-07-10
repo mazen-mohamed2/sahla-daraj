@@ -24,6 +24,7 @@ function EscrowPage() {
   const role = useAuthStore((s) => s.role);
   const { data, isLoading } = useEscrows();
   const [selected, setSelected] = useState<Escrow | null>(null);
+  const [postReleaseReview, setPostReleaseReview] = useState<Escrow | null>(null);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<string>("all");
 
@@ -152,7 +153,20 @@ function EscrowPage() {
         ))}
       </div>
 
-      <EscrowDetailsDialog escrow={selected} role={role === "admin" ? "admin" : role === "agency" ? "agency" : "user"} open={!!selected} onOpenChange={(o) => !o && setSelected(null)} />
+      <EscrowDetailsDialog
+        escrow={selected}
+        role={role === "admin" ? "admin" : role === "agency" ? "agency" : "user"}
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+        onDeliveryConfirmed={(e) => setPostReleaseReview(e)}
+      />
+
+      {postReleaseReview && (
+        <PostReleaseReview
+          escrow={postReleaseReview}
+          onDone={() => setPostReleaseReview(null)}
+        />
+      )}
     </DashboardLayout>
   );
 }
