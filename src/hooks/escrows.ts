@@ -385,6 +385,7 @@ export const useForceRefundEscrow = () => {
       }));
       notify("user", { title: "تمت الموافقة على الاسترداد", message: `تم استرداد ${total.toLocaleString("ar-EG")} ج.م لضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
       notify("agency", { title: "استرداد ضمان", message: `تم استرداد ضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
+      audit({ action: "force_refund_escrow", entity: "escrow", entityId: id, meta: reason });
     },
   });
 };
