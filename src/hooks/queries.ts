@@ -127,6 +127,7 @@ export const useUpdateWithdrawalStatus = () => {
       );
       const title = result.status === "approved" ? "تمت الموافقة على سحبك" : result.status === "rejected" ? "تم رفض طلب السحب" : "تم تحديث طلب السحب";
       notify("user", { title, message: `طلب السحب ${result.id}`, category: "wallet", relatedEntityType: "withdrawal", relatedEntityId: result.id, actionUrl: "/user/wallet", priority: "high" });
+      audit({ action: `withdrawal_${result.status}`, entity: "withdrawal", entityId: result.id });
     },
   });
 };
