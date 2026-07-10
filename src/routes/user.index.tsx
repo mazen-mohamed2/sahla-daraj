@@ -44,6 +44,10 @@ function UserOverview() {
           </CardContent>
         </Card>
       </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="md:col-span-1"><ReputationSummaryCard role="user" /></div>
+      </div>
     </DashboardLayout>
   );
 }
