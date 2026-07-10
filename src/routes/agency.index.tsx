@@ -7,6 +7,7 @@ import { useMoney } from "@/lib/format";
 import { Car, Coins, Gavel, TrendingUp } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReputationSummaryCard } from "@/components/reviews/reputation-summary-card";
 
 export const Route = createFileRoute("/agency/")({ component: AgencyOverview });
 
