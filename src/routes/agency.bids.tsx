@@ -122,10 +122,16 @@ function Bids() {
                       )}
                     </div>
                   ) : (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button variant="outline" size="sm" className="flex-1" onClick={() => setDetail(r)}>
                         <Eye className="ml-1 size-3.5" /> التفاصيل
                       </Button>
+                      <StartChatButton
+                        peer={{ id: `user:${r.requester}`, name: r.requester, role: "user", avatarColor: "#2563eb" }}
+                        related={{ kind: "import_request", id: r.id, label: `${r.brand} ${r.model} ${r.year}`, meta: { budget: r.budgetMax } }}
+                        label="محادثة"
+                        className="flex-1"
+                      />
                       <Button size="sm" className="flex-1" onClick={() => setOfferTarget({ request: r })}>
                         <Gavel className="ml-1 size-3.5" /> تقديم عرض
                       </Button>
