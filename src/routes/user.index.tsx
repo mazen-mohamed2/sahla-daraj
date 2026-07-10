@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Car, Wallet, ShieldCheck, Heart, Plus } from "lucide-react";
 import { useMoney } from "@/lib/format";
 import { useEscrows, useListings } from "@/hooks/queries";
+import { ReputationSummaryCard } from "@/components/reviews/reputation-summary-card";
 
 export const Route = createFileRoute("/user/")({ component: UserOverview });
 
