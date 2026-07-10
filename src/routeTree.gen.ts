@@ -39,6 +39,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminKycRouteImport } from './routes/admin.kyc'
 import { Route as AdminImportRequestsRouteImport } from './routes/admin.import-requests'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminEscrowRouteImport } from './routes/admin.escrow'
@@ -196,6 +197,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminImportRequestsRoute = AdminImportRequestsRouteImport.update({
   id: '/import-requests',
   path: '/import-requests',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -673,6 +685,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/import-requests': {
       id: '/admin/import-requests'
       path: '/import-requests'
@@ -724,6 +743,7 @@ interface AdminRouteChildren {
   AdminEscrowRoute: typeof AdminEscrowRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
   AdminImportRequestsRoute: typeof AdminImportRequestsRoute
+  AdminKycRoute: typeof AdminKycRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
@@ -737,6 +757,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEscrowRoute: AdminEscrowRoute,
   AdminFinancialRoute: AdminFinancialRoute,
   AdminImportRequestsRoute: AdminImportRequestsRoute,
+  AdminKycRoute: AdminKycRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,
