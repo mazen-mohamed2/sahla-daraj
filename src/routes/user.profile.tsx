@@ -110,6 +110,8 @@ function ProfileView({ admin = false }: { admin?: boolean }) {
             </div>
           </CardContent>
         </Card>
+
+        {!admin && <div className="lg:col-span-3"><KycCard /></div>}
       </div>
     </DashboardLayout>
   );
