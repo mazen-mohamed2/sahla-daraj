@@ -126,9 +126,12 @@ function EscrowPage() {
                   </Button>
                 )}
                 {e.status === "released" && (
-                  <div className="flex-1 rounded-lg bg-success/10 border border-success/40 p-2 text-xs text-success flex items-center gap-2">
-                    <CheckCircle2 className="size-3.5" /> تمت الصفقة بنجاح
-                  </div>
+                  <>
+                    <div className="rounded-lg bg-success/10 border border-success/40 p-2 text-xs text-success flex items-center gap-2">
+                      <CheckCircle2 className="size-3.5" /> مكتمل
+                    </div>
+                    <EscrowReviewAction escrow={e} viewerRole="user" />
+                  </>
                 )}
                 {e.status === "refunded" && (
                   <div className="flex-1 rounded-lg bg-muted p-2 text-xs text-muted-foreground flex items-center gap-2">
