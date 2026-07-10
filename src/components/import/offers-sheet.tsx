@@ -10,7 +10,7 @@ import { OFFER_STATUS_LABELS_AR, type ImportRequest, type Offer } from "@/servic
 import { useOffers, useAcceptOffer, useRejectOffer } from "@/hooks/import-requests";
 import { ConfirmDialog, ReasonDialog } from "@/components/flow";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Link } from "@tanstack/react-router";
+import { StartChatButton } from "@/components/chat/start-chat-button";
 
 type SortKey = "price" | "delivery" | "rating" | "newest";
 
@@ -99,11 +99,11 @@ export function OffersSheet({ request, open, onOpenChange, role = "user" }: Prop
                 </div>
                 {o.notes && <p className="text-sm rounded bg-muted/40 p-2">{o.notes}</p>}
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" asChild>
-                    <Link to="/user/chat">
-                      <MessageCircle className="ml-1 size-3.5" /> محادثة
-                    </Link>
-                  </Button>
+                  <StartChatButton
+                    peer={{ id: `agency:${o.agencyId}`, name: o.agencyName, role: "agency", avatarColor: "#059669" }}
+                    related={{ kind: "offer", id: o.id, label: `عرض على ${request?.brand} ${request?.model}`, meta: { price: o.price, requestId: o.requestId } }}
+                    label="محادثة"
+                  />
                   {canAct && o.status === "pending" && (
                     <>
                       <Button size="sm" onClick={() => setAcceptTarget(o)}>
