@@ -12,7 +12,8 @@ import { useAuthStore } from "@/store/auth";
  */
 export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; viewerRole: "user" | "agency" }) {
   const [open, setOpen] = useState(false);
-  const me = useAuthStore((s) => ({ name: s.name, phone: s.phone }));
+  const meName = useAuthStore((s) => s.name);
+  const mePhone = useAuthStore((s) => s.phone);
   const hasReviewed = useHasReviewed(escrow.id, viewerRole);
 
   if (escrow.status !== "released") return null;
@@ -20,7 +21,7 @@ export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; vie
   const subject =
     viewerRole === "user"
       ? { id: escrow.agencyName, name: escrow.agencyName, role: "agency" as const }
-      : { id: escrow.buyerName ?? me.phone, name: escrow.buyerName ?? "المشتري", role: "user" as const };
+      : { id: escrow.buyerName ?? mePhone, name: escrow.buyerName ?? "المشتري", role: "user" as const };
 
   if (hasReviewed) {
     return (
@@ -44,7 +45,7 @@ export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; vie
         open={open}
         onOpenChange={setOpen}
         escrowId={escrow.id}
-        reviewer={{ id: me.phone, name: me.name, role: viewerRole }}
+        reviewer={{ id: mePhone, name: meName, role: viewerRole }}
         subject={subject}
       />
     </>
