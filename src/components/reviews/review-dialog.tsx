@@ -11,12 +11,13 @@ interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   escrowId: string;
+  vehicle?: string;
   reviewer: { id: string; name: string; role: "user" | "agency" };
   reviewee: { id: string; name: string; role: "user" | "agency" };
   onSubmitted?: () => void;
 }
 
-export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, reviewee, onSubmitted }: Props) {
+export function ReviewDialog({ open, onOpenChange, escrowId, vehicle, reviewer, reviewee, onSubmitted }: Props) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const submit = useSubmitReview();
@@ -36,6 +37,7 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, reviewee,
     submit.mutate(
       {
         escrowId,
+        vehicle,
         reviewerId: reviewer.id,
         reviewerName: reviewer.name,
         reviewerRole: reviewer.role,
@@ -60,7 +62,10 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, reviewee,
       <DialogContent dir="rtl">
         <DialogHeader>
           <DialogTitle>قيّم تجربتك مع {reviewee.name}</DialogTitle>
-          <DialogDescription>{targetLabel}</DialogDescription>
+          <DialogDescription>
+            {targetLabel}
+            {vehicle ? ` — ${vehicle}` : ""}
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
