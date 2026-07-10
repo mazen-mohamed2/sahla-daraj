@@ -23,6 +23,7 @@ import { useMoney, formatDateLoc } from "@/lib/format";
 import { useUIStore } from "@/store/ui";
 import { t } from "@/lib/i18n";
 import { toast } from "sonner";
+import { StartChatButton } from "@/components/chat/start-chat-button";
 
 export const Route = createFileRoute("/user/listings/$id")({ component: ListingDetailPage });
 
@@ -232,7 +233,7 @@ function ListingDetailPage() {
               </div>
               <StartChatButton
                 peer={{ id: `agency:${detail.seller.name}`, name: detail.seller.name, role: "agency", avatarColor: "#059669" }}
-                related={{ kind: "listing", id: detail.id, label: `${detail.brand} ${detail.model} ${detail.year}`, meta: { price: detail.price } }}
+                related={{ kind: "listing", id: detail.id, label: `${detail.make} ${detail.model} ${detail.year}`, meta: { price: detail.price } }}
                 label={lang === "ar" ? "مراسلة البائع" : "Message seller"}
                 variant="default"
                 className="w-full"
