@@ -82,6 +82,7 @@ export function EscrowReviewAction({
         open={open}
         onOpenChange={(o) => { setOpen(o); if (!o) onAutoOpenConsumed?.(); }}
         escrowId={escrow.id}
+        vehicle={escrow.vehicle}
         reviewer={{ id: mePhone, name: meName, role: viewerRole }}
         reviewee={reviewee}
         onSubmitted={onAutoOpenConsumed}
