@@ -5,21 +5,22 @@
 // Buyer and Agency may EACH submit one review per escrow, they are not
 // treated as duplicates of one another.
 
-export type ReviewStatus = "visible" | "hidden";
+export type ReviewStatus = "visible" | "hidden" | "reported";
 
 export interface Review {
   id: string;
   escrowId: string;
+  vehicle?: string;                 // denormalized for display convenience
   reviewerId: string;
   reviewerName: string;
   reviewerRole: "user" | "agency";
-  revieweeId: string;      // opaque key — usually the counterparty display name
+  revieweeId: string;               // opaque key — usually the counterparty display name
   revieweeName: string;
   revieweeRole: "user" | "agency";
-  rating: number;          // 1..5
+  rating: number;                   // 1..5
   comment: string;
   createdAt: string;
-  status: ReviewStatus;    // admin can hide inappropriate reviews
+  status: ReviewStatus;             // admin can hide / flag inappropriate reviews
 }
 
 export const REVIEWS_QK = ["reviews"] as const;
@@ -30,9 +31,14 @@ export function migrateReview(raw: any): Review {
   const revieweeId = raw.revieweeId ?? raw.subjectId ?? "";
   const revieweeName = raw.revieweeName ?? raw.subjectName ?? "";
   const revieweeRole = raw.revieweeRole ?? raw.subjectRole ?? "agency";
+  const status: ReviewStatus =
+    raw.status === "hidden" ? "hidden"
+    : raw.status === "reported" ? "reported"
+    : "visible";
   return {
     id: raw.id,
     escrowId: raw.escrowId,
+    vehicle: raw.vehicle,
     reviewerId: raw.reviewerId,
     reviewerName: raw.reviewerName,
     reviewerRole: raw.reviewerRole,
@@ -42,6 +48,6 @@ export function migrateReview(raw: any): Review {
     rating: Number(raw.rating) || 0,
     comment: raw.comment ?? "",
     createdAt: raw.createdAt,
-    status: raw.status === "hidden" ? "hidden" : "visible",
+    status,
   };
 }
