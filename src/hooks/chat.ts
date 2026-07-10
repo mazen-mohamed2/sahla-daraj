@@ -19,11 +19,16 @@ export const CHAT_QK = {
   messages: (convId: string) => ["chat", "messages", convId] as const,
 };
 
-/** Deterministic per-role identifier for the current signed-in participant. */
+/** Deterministic identifier for the current signed-in participant.
+ *  In the mock backend, each role represents a single logical actor,
+ *  so we use the role as the shared identity. This keeps a conversation
+ *  started by an agency visible to the user after account switch —
+ *  both sides read/write under the same participant IDs. When a real
+ *  backend replaces the mock, swap this to a stable per-account UUID. */
 export function useMeParticipant(): ChatParticipant {
   const auth = useAuthStore();
   return {
-    id: `${auth.role}:${auth.phone}`,
+    id: auth.role,
     name: auth.name,
     role: auth.role,
     avatarColor: auth.avatarColor,
