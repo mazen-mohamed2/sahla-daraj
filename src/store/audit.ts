@@ -4,6 +4,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useAuthStore } from "./auth";
 
 export type AuditActorRole = "admin" | "system";
 
@@ -45,13 +46,15 @@ export const useAuditStore = create<AuditState>()(
   ),
 );
 
-/** Non-hook access for mutations. Reads current admin actor from auth. */
-export const audit = (e: Omit<AuditEntry, "id" | "createdAt" | "actor" | "actorRole"> & Partial<Pick<AuditEntry, "actor" | "actorRole">>) => {
-  // Late import to avoid cycles.
-  const auth = (require("./auth") as typeof import("./auth")).useAuthStore.getState();
+type AuditInput = Omit<AuditEntry, "id" | "createdAt" | "actor" | "actorRole"> &
+  Partial<Pick<AuditEntry, "actor" | "actorRole">>;
+
+/** Non-hook access for mutations. Defaults actor to the current admin. */
+export const audit = (e: AuditInput) => {
+  const auth = useAuthStore.getState();
   useAuditStore.getState().log({
     actor: e.actor ?? auth.name ?? "Admin",
-    actorRole: e.actorRole ?? "admin",
+    actorRole: e.actorRole ?? (auth.role === "admin" ? "admin" : "system"),
     action: e.action,
     entity: e.entity,
     entityId: e.entityId,
