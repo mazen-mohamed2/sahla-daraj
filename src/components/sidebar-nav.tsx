@@ -48,6 +48,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/user/escrow", label: "nav.escrow", icon: ShoppingCart },
     { to: "/user/import-requests", label: "nav.importRequests", icon: Ship },
     { to: "/user/favorites", label: "nav.favorites", icon: Heart },
+    { to: "/user/reviews", label: "nav.reviews", icon: Star },
     { to: "/user/chat", label: "nav.chat", icon: MessagesSquare },
     { to: "/user/notifications", label: "nav.notifications", icon: Bell },
     { to: "/user/profile", label: "nav.profile", icon: UserCircle },
