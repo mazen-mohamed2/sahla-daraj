@@ -137,11 +137,15 @@ export const mockChatService: ChatService = {
     await delay();
     return loadMsgs()[conversationId] ?? [];
   },
-  async startConversation({ me, peer, related }) {
+  async startConversation({ me: rawMe, peer: rawPeer, related }) {
     await delay(150);
+    // Collapse to role-scoped identity so both sides of the conversation
+    // resolve to the same participant IDs across accounts and refreshes.
+    const me = normalizeParticipant(rawMe);
+    const peer = normalizeParticipant(rawPeer);
     const convs = loadConvs();
-    // Reuse an existing conversation between the same two participants
-    // for the same related entity, so entry points don't duplicate threads.
+    // Reuse an existing conversation between the same two roles for the
+    // same related entity so entry points don't duplicate threads.
     const existing = convs.find(
       (c) =>
         c.participants.length === 2 &&
@@ -158,7 +162,6 @@ export const mockChatService: ChatService = {
       createdAt: nowIso(),
     };
     saveConvs([conv, ...convs]);
-    // Seed a system message so the timeline never opens empty.
     const sys: ChatMessage = {
       id: uid("m"),
       conversationId: conv.id,
