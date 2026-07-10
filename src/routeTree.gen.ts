@@ -29,6 +29,7 @@ import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as UserChatRouteImport } from './routes/user.chat'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
+import { Route as AgencyReviewsRouteImport } from './routes/agency.reviews'
 import { Route as AgencyNotificationsRouteImport } from './routes/agency.notifications'
 import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
@@ -148,6 +149,11 @@ const UserChatRoute = UserChatRouteImport.update({
 const AgencyTokensRoute = AgencyTokensRouteImport.update({
   id: '/tokens',
   path: '/tokens',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyReviewsRoute = AgencyReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
   getParentRoute: () => AgencyRoute,
 } as any)
 const AgencyNotificationsRoute = AgencyNotificationsRouteImport.update({
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -315,6 +322,7 @@ export interface FileRoutesByTo {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -402,6 +411,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -483,6 +494,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -649,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/tokens'
       fullPath: '/agency/tokens'
       preLoaderRoute: typeof AgencyTokensRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/reviews': {
+      id: '/agency/reviews'
+      path: '/reviews'
+      fullPath: '/agency/reviews'
+      preLoaderRoute: typeof AgencyReviewsRouteImport
       parentRoute: typeof AgencyRoute
     }
     '/agency/notifications': {
@@ -836,6 +855,7 @@ interface AgencyRouteChildren {
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyListingsRoute: typeof AgencyListingsRoute
   AgencyNotificationsRoute: typeof AgencyNotificationsRoute
+  AgencyReviewsRoute: typeof AgencyReviewsRoute
   AgencyTokensRoute: typeof AgencyTokensRoute
   AgencyIndexRoute: typeof AgencyIndexRoute
 }
@@ -848,6 +868,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyListingsRoute: AgencyListingsRoute,
   AgencyNotificationsRoute: AgencyNotificationsRoute,
+  AgencyReviewsRoute: AgencyReviewsRoute,
   AgencyTokensRoute: AgencyTokensRoute,
   AgencyIndexRoute: AgencyIndexRoute,
 }
