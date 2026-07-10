@@ -163,9 +163,17 @@ function EscrowPage() {
       />
 
       {postReleaseReview && (
-        <PostReleaseReview
-          escrow={postReleaseReview}
-          onDone={() => setPostReleaseReview(null)}
+        <ReviewDialog
+          open
+          onOpenChange={(o) => { if (!o) setPostReleaseReview(null); }}
+          escrowId={postReleaseReview.id}
+          reviewer={{ id: useAuthStore.getState().phone, name: useAuthStore.getState().name, role: "user" }}
+          reviewee={{
+            id: postReleaseReview.agencyId || postReleaseReview.agencyName,
+            name: postReleaseReview.agencyName,
+            role: "agency",
+          }}
+          onSubmitted={() => setPostReleaseReview(null)}
         />
       )}
     </DashboardLayout>
