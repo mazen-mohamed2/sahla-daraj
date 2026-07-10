@@ -25,6 +25,10 @@ function AgencyOverview() {
         <KpiCard title="إيرادات الشهر" value={money(298000)} icon={TrendingUp} change="+18%" tone="success" />
       </div>
 
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="md:col-span-1"><ReputationSummaryCard role="agency" /></div>
+      </div>
+
       <Card className="mt-6">
         <CardHeader><CardTitle className="font-display">أداء الإيرادات</CardTitle></CardHeader>
         <CardContent className="h-80">
