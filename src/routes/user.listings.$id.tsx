@@ -230,6 +230,13 @@ function ListingDetailPage() {
                 <Star className="size-4 fill-warning text-warning" /> {detail.seller.rating}
                 <span className="text-muted-foreground ms-2">· {detail.seller.sales} {lang === "ar" ? "صفقة" : "sales"}</span>
               </div>
+              <StartChatButton
+                peer={{ id: `agency:${detail.seller.name}`, name: detail.seller.name, role: "agency", avatarColor: "#059669" }}
+                related={{ kind: "listing", id: detail.id, label: `${detail.brand} ${detail.model} ${detail.year}`, meta: { price: detail.price } }}
+                label={lang === "ar" ? "مراسلة البائع" : "Message seller"}
+                variant="default"
+                className="w-full"
+              />
               {phoneShown ? (
                 <div className="rounded-md bg-muted p-2 font-mono text-sm text-center">{detail.seller.phone}</div>
               ) : (
