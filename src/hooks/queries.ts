@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as mock from "../services/mock-data";
 import { notify } from "@/store/notifications";
+import { audit } from "@/store/audit";
 
 const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
 
@@ -66,9 +67,14 @@ export const useUpdateUserStatus = () => {
       );
       if (result.status === "banned") {
         notify("admin", { title: "تم حظر مستخدم", message: `تم حظر المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "medium" });
-      } else if (result.verified) {
+        audit({ action: "ban_user", entity: "user", entityId: result.id });
+      } else if (result.status === "active") {
+        audit({ action: "unban_user", entity: "user", entityId: result.id });
+      }
+      if (result.verified) {
         notify("admin", { title: "تم توثيق مستخدم", message: `تم توثيق المستخدم ${result.id}`, category: "account", relatedEntityType: "user", relatedEntityId: result.id, actionUrl: "/admin/users", priority: "low" });
         notify("user", { title: "تم توثيق حسابك", message: "تمت الموافقة على طلب التوثيق (KYC)", category: "account", relatedEntityType: "kyc", actionUrl: "/user/profile", priority: "high" });
+        audit({ action: "verify_user", entity: "user", entityId: result.id });
       }
     },
   });
@@ -100,6 +106,9 @@ export const useUpdateDisputeStatus = () => {
       );
       if (result.status === "resolved" || result.status === "rejected") {
         notify("user", { title: result.status === "resolved" ? "تم حل النزاع" : "تم رفض النزاع", message: `النزاع ${result.id}${result.note ? ` — ${result.note}` : ""}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: result.id, actionUrl: "/user/escrow", priority: "high" });
+        audit({ action: result.status === "resolved" ? "resolve_dispute" : "reject_dispute", entity: "dispute", entityId: result.id, meta: result.note });
+      } else if (result.status === "escalated") {
+        audit({ action: "escalate_dispute", entity: "dispute", entityId: result.id, meta: result.note });
       }
     },
   });
@@ -118,6 +127,7 @@ export const useUpdateWithdrawalStatus = () => {
       );
       const title = result.status === "approved" ? "تمت الموافقة على سحبك" : result.status === "rejected" ? "تم رفض طلب السحب" : "تم تحديث طلب السحب";
       notify("user", { title, message: `طلب السحب ${result.id}`, category: "wallet", relatedEntityType: "withdrawal", relatedEntityId: result.id, actionUrl: "/user/wallet", priority: "high" });
+      audit({ action: `withdrawal_${result.status}`, entity: "withdrawal", entityId: result.id });
     },
   });
 };
@@ -136,6 +146,7 @@ export const useUpdateAgencyStatus = () => {
       const approved = result.status === "approved";
       notify("agency", { title: approved ? "تمت الموافقة على معرضك" : "تم رفض طلب اعتماد المعرض", message: approved ? "أصبح بإمكانك النشر الآن" : (result.reason ?? "يرجى مراجعة الشروط"), category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/agency", priority: "high" });
       notify("admin", { title: approved ? "تم اعتماد معرض" : "تم رفض معرض", message: `المعرض ${result.id}`, category: "account", relatedEntityType: "agency", relatedEntityId: result.id, actionUrl: "/admin/agencies", priority: "low" });
+      audit({ action: approved ? "approve_agency" : "reject_agency", entity: "agency", entityId: result.id, meta: result.reason });
     },
   });
 };
@@ -224,6 +235,7 @@ export const useUpdateListingStatus = () => {
       for (const r of ["user", "agency"] as const) {
         notify(r, { title, message: `الإعلان ${result.id}`, category: "listings", relatedEntityType: "listing", relatedEntityId: result.id, actionUrl: `/${r}/listings`, priority: "medium" });
       }
+      audit({ action: approved ? "approve_listing" : result.status === "rejected" ? "reject_listing" : `listing_${result.status}`, entity: "listing", entityId: result.id });
     },
   });
 };

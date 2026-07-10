@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Car, Scale, Wallet, Building2, PackageCheck,
   Coins, MessagesSquare, Heart, ShoppingCart, PlusSquare, Ship,
-  UserCircle, Settings, FileText, Bell, type LucideIcon,
+  UserCircle, Settings, FileText, Bell, ShieldCheck, ScrollText, type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { useUIStore } from "@/store/ui";
@@ -21,6 +21,9 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/admin/financial", label: "nav.financial", icon: Wallet },
     { to: "/admin/escrow", label: "nav.escrow", icon: ShoppingCart },
     { to: "/admin/agencies", label: "nav.agencies", icon: Building2 },
+    { to: "/admin/agencies", label: "nav.agencies", icon: Building2 },
+    { to: "/admin/kyc", label: "nav.kyc", icon: ShieldCheck },
+    { to: "/admin/audit", label: "nav.audit", icon: ScrollText },
     { to: "/admin/profile", label: "nav.profile", icon: UserCircle },
     { to: "/admin/notifications", label: "nav.notifications", icon: Bell },
   ],

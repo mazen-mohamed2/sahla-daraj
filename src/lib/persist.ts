@@ -122,4 +122,5 @@ export const PERSIST_KEYS = {
   walletBalance: ["wallet-balance"] as const,
   walletTx: ["wallet-tx"] as const,
   escrows: ["escrows"] as const,
+  reviews: ["reviews"] as const,
 };

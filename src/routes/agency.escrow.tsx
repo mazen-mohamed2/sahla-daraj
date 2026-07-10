@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KpiCard } from "@/components/kpi-card";
 import { EscrowDetailsDialog } from "@/components/escrow/escrow-details-dialog";
+import { EscrowReviewAction } from "@/components/reviews/escrow-review-action";
 import { useMoney } from "@/lib/format";
 import { formatDate } from "@/services/mock-data";
 import { ShieldCheck, ShoppingBag, Truck, CheckCircle2, Eye } from "lucide-react";
@@ -89,9 +90,12 @@ function AgencyEscrowPage() {
                     <td className="p-3"><StatusBadge status={e.status} /></td>
                     <td className="p-3 text-muted-foreground">{formatDate(e.createdAt)}</td>
                     <td className="p-3">
-                      <Button size="sm" variant="outline" onClick={(ev) => { ev.stopPropagation(); setSelected(e); }}>
-                        <Eye className="ml-1 size-4" /> فتح
-                      </Button>
+                      <div className="flex gap-2 justify-end">
+                        <Button size="sm" variant="outline" onClick={(ev) => { ev.stopPropagation(); setSelected(e); }}>
+                          <Eye className="ml-1 size-4" /> فتح
+                        </Button>
+                        <EscrowReviewAction escrow={e} viewerRole="agency" />
+                      </div>
                     </td>
                   </tr>
                 ))}

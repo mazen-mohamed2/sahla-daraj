@@ -13,6 +13,7 @@ import {
   type DisputeStatus,
 } from "@/services/escrow-data";
 import { notify } from "@/store/notifications";
+import { audit } from "@/store/audit";
 import { useAuthStore } from "@/store/auth";
 import type { WalletBalance, WalletTx } from "@/hooks/wallet";
 
@@ -355,6 +356,7 @@ export const useForceReleaseEscrow = () => {
       }));
       notify("agency", { title: "إفراج إجباري", message: `تم إفراج ضمان ${id} من الإدارة`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
       notify("user", { title: "قرار الإدارة", message: `تم إفراج ضمان ${id} لصالح المعرض${reason ? ` — ${reason}` : ""}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
+      audit({ action: "force_release_escrow", entity: "escrow", entityId: id, meta: reason });
     },
   });
 };
@@ -383,6 +385,7 @@ export const useForceRefundEscrow = () => {
       }));
       notify("user", { title: "تمت الموافقة على الاسترداد", message: `تم استرداد ${total.toLocaleString("ar-EG")} ج.م لضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
       notify("agency", { title: "استرداد ضمان", message: `تم استرداد ضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
+      audit({ action: "force_refund_escrow", entity: "escrow", entityId: id, meta: reason });
     },
   });
 };
@@ -403,6 +406,7 @@ export const useResolveDispute = () => {
       const title = status === "resolved" ? "تم حل النزاع" : status === "rejected" ? "تم رفض النزاع" : "تحديث النزاع";
       notify("user", { title, message: `النزاع ${id}${resolution ? ` — ${resolution}` : ""}`, category: "escrow", relatedEntityType: "dispute", relatedEntityId: id, actionUrl: "/user/escrow", priority: "high" });
       notify("agency", { title, message: `النزاع على الضمان ${id}`, category: "escrow", relatedEntityType: "escrow", relatedEntityId: id, actionUrl: "/agency/escrow", priority: "high" });
+      audit({ action: `dispute_${status}`, entity: "dispute", entityId: id, meta: resolution });
     },
   });
 };

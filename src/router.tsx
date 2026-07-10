@@ -13,6 +13,7 @@ export const getRouter = () => {
     PERSIST_KEYS.walletBalance,
     PERSIST_KEYS.walletTx,
     PERSIST_KEYS.escrows,
+    PERSIST_KEYS.reviews,
   ]);
 
   const router = createRouter({

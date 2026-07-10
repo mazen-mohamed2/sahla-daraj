@@ -39,10 +39,12 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
+import { Route as AdminKycRouteImport } from './routes/admin.kyc'
 import { Route as AdminImportRequestsRouteImport } from './routes/admin.import-requests'
 import { Route as AdminFinancialRouteImport } from './routes/admin.financial'
 import { Route as AdminEscrowRouteImport } from './routes/admin.escrow'
 import { Route as AdminDisputesRouteImport } from './routes/admin.disputes'
+import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as UserListingsIdRouteImport } from './routes/user.listings.$id'
 
@@ -196,6 +198,11 @@ const AdminListingsRoute = AdminListingsRouteImport.update({
   path: '/listings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminImportRequestsRoute = AdminImportRequestsRouteImport.update({
   id: '/import-requests',
   path: '/import-requests',
@@ -216,6 +223,11 @@ const AdminDisputesRoute = AdminDisputesRouteImport.update({
   path: '/disputes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuditRoute = AdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgenciesRoute = AdminAgenciesRouteImport.update({
   id: '/agencies',
   path: '/agencies',
@@ -234,10 +246,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -269,10 +283,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -308,10 +324,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/user': typeof UserRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRoute
+  '/admin/audit': typeof AdminAuditRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/escrow': typeof AdminEscrowRoute
   '/admin/financial': typeof AdminFinancialRoute
   '/admin/import-requests': typeof AdminImportRequestsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -348,10 +366,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/user'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -383,10 +403,12 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -421,10 +443,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/user'
     | '/admin/agencies'
+    | '/admin/audit'
     | '/admin/disputes'
     | '/admin/escrow'
     | '/admin/financial'
     | '/admin/import-requests'
+    | '/admin/kyc'
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
@@ -673,6 +697,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/import-requests': {
       id: '/admin/import-requests'
       path: '/import-requests'
@@ -701,6 +732,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDisputesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/audit': {
+      id: '/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agencies': {
       id: '/admin/agencies'
       path: '/agencies'
@@ -720,10 +758,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgenciesRoute: typeof AdminAgenciesRoute
+  AdminAuditRoute: typeof AdminAuditRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminEscrowRoute: typeof AdminEscrowRoute
   AdminFinancialRoute: typeof AdminFinancialRoute
   AdminImportRequestsRoute: typeof AdminImportRequestsRoute
+  AdminKycRoute: typeof AdminKycRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
@@ -733,10 +773,12 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgenciesRoute: AdminAgenciesRoute,
+  AdminAuditRoute: AdminAuditRoute,
   AdminDisputesRoute: AdminDisputesRoute,
   AdminEscrowRoute: AdminEscrowRoute,
   AdminFinancialRoute: AdminFinancialRoute,
   AdminImportRequestsRoute: AdminImportRequestsRoute,
+  AdminKycRoute: AdminKycRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,
@@ -825,3 +867,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

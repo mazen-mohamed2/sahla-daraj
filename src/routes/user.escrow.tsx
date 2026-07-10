@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { KpiCard } from "@/components/kpi-card";
 import { EscrowDetailsDialog } from "@/components/escrow/escrow-details-dialog";
+import { EscrowReviewAction } from "@/components/reviews/escrow-review-action";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
 import { Info, ShieldCheck, ShoppingBag, AlertTriangle, CheckCircle2, RefreshCcw, Eye } from "lucide-react";
@@ -125,9 +126,12 @@ function EscrowPage() {
                   </Button>
                 )}
                 {e.status === "released" && (
-                  <div className="flex-1 rounded-lg bg-success/10 border border-success/40 p-2 text-xs text-success flex items-center gap-2">
-                    <CheckCircle2 className="size-3.5" /> تمت الصفقة بنجاح
-                  </div>
+                  <>
+                    <div className="rounded-lg bg-success/10 border border-success/40 p-2 text-xs text-success flex items-center gap-2">
+                      <CheckCircle2 className="size-3.5" /> مكتمل
+                    </div>
+                    <EscrowReviewAction escrow={e} viewerRole="user" />
+                  </>
                 )}
                 {e.status === "refunded" && (
                   <div className="flex-1 rounded-lg bg-muted p-2 text-xs text-muted-foreground flex items-center gap-2">
