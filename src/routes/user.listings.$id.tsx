@@ -228,7 +228,7 @@ function ListingDetailPage() {
             <CardHeader><CardTitle className="font-display text-base">{lang === "ar" ? "البائع" : "Seller"}</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="font-semibold">{detail.seller.name}</div>
-              <ReputationBlock subjectId={detail.seller.name} subjectName={detail.seller.name} completedDeals={detail.seller.sales} maxRecent={2} />
+              <ReputationBlock revieweeId={detail.seller.name} revieweeName={detail.seller.name} revieweeRole="agency" completedDeals={detail.seller.sales} maxRecent={2} />
               <StartChatButton
                 peer={{ id: `agency:${detail.seller.name}`, name: detail.seller.name, role: "agency", avatarColor: "#059669" }}
                 related={{ kind: "listing", id: detail.id, label: `${detail.make} ${detail.model} ${detail.year}`, meta: { price: detail.price } }}

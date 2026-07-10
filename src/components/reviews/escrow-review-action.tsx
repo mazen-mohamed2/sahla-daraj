@@ -1,33 +1,70 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Star, CheckCircle2 } from "lucide-react";
+import { Star, Eye } from "lucide-react";
 import { ReviewDialog } from "./review-dialog";
-import { useHasReviewed } from "@/hooks/reviews";
+import { ReviewViewDialog } from "./review-view-dialog";
+import { useMyEscrowReview } from "@/hooks/reviews";
 import type { Escrow } from "@/services/escrow-data";
 import { useAuthStore } from "@/store/auth";
 
 /**
- * Renders a "Leave a review" CTA — but only when the escrow is `released`
- * (per requirement) and the current role has not yet reviewed this escrow.
+ * Escrow-scoped review CTA.
+ * - Only rendered when escrow.status === "released".
+ * - Button label identifies WHO is being reviewed.
+ * - Once submitted, swaps to a "View Review" affordance.
  */
-export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; viewerRole: "user" | "agency" }) {
-  const [open, setOpen] = useState(false);
+export function EscrowReviewAction({
+  escrow,
+  viewerRole,
+  autoOpen = false,
+  onAutoOpenConsumed,
+}: {
+  escrow: Escrow;
+  viewerRole: "user" | "agency";
+  /** When true, opens the review dialog once on mount (post delivery-confirmation). */
+  autoOpen?: boolean;
+  onAutoOpenConsumed?: () => void;
+}) {
   const meName = useAuthStore((s) => s.name);
   const mePhone = useAuthStore((s) => s.phone);
-  const hasReviewed = useHasReviewed(escrow.id, viewerRole);
+  const existing = useMyEscrowReview(escrow.id, viewerRole);
+  const [open, setOpen] = useState(autoOpen);
+  const [viewOpen, setViewOpen] = useState(false);
 
   if (escrow.status !== "released") return null;
 
-  const subject =
+  // reviewee = the OTHER party
+  const reviewee =
     viewerRole === "user"
-      ? { id: escrow.agencyName, name: escrow.agencyName, role: "agency" as const }
-      : { id: escrow.buyerName ?? mePhone, name: escrow.buyerName ?? "المشتري", role: "user" as const };
+      ? {
+          id: escrow.agencyId || escrow.agencyName,
+          name: escrow.agencyName,
+          role: "agency" as const,
+        }
+      : {
+          id: escrow.buyerId || escrow.buyerName || mePhone,
+          name: escrow.buyerName || "المشتري",
+          role: "user" as const,
+        };
 
-  if (hasReviewed) {
+  const buttonLabel =
+    viewerRole === "user"
+      ? `قيّم المعرض: ${reviewee.name}`
+      : `قيّم المشتري: ${reviewee.name}`;
+
+  if (existing) {
     return (
-      <div className="flex-1 rounded-lg bg-success/10 border border-success/40 p-2 text-xs text-success flex items-center gap-2">
-        <CheckCircle2 className="size-3.5" /> شكراً — تم إرسال تقييمك
-      </div>
+      <>
+        <Button
+          size="sm"
+          variant="outline"
+          className="flex-1"
+          onClick={(ev) => { ev.stopPropagation(); setViewOpen(true); }}
+        >
+          <Eye className="ml-2 size-4" /> عرض تقييمك
+        </Button>
+        <ReviewViewDialog open={viewOpen} onOpenChange={setViewOpen} review={existing} />
+      </>
     );
   }
 
@@ -39,14 +76,15 @@ export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; vie
         className="flex-1"
         onClick={(ev) => { ev.stopPropagation(); setOpen(true); }}
       >
-        <Star className="ml-2 size-4" /> اترك تقييمك
+        <Star className="ml-2 size-4" /> {buttonLabel}
       </Button>
       <ReviewDialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(o) => { setOpen(o); if (!o) onAutoOpenConsumed?.(); }}
         escrowId={escrow.id}
         reviewer={{ id: mePhone, name: meName, role: viewerRole }}
-        subject={subject}
+        reviewee={reviewee}
+        onSubmitted={onAutoOpenConsumed}
       />
     </>
   );

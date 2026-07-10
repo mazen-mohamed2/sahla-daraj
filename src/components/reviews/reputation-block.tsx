@@ -5,15 +5,18 @@ import { formatDate } from "@/services/mock-data";
 import { Star, MessageSquare, CheckCircle2 } from "lucide-react";
 
 interface Props {
-  subjectId: string;
-  subjectName?: string;
+  /** ID of the reviewee (usually the counterparty display name). */
+  revieweeId: string;
+  revieweeName?: string;
+  /** Optional role scope — keeps buyer & agency reputations separated. */
+  revieweeRole?: "user" | "agency";
   completedDeals?: number;
   compact?: boolean;
   maxRecent?: number;
 }
 
-export function ReputationBlock({ subjectId, subjectName, completedDeals, compact, maxRecent = 3 }: Props) {
-  const { avg, total, reviews } = useReputation(subjectId);
+export function ReputationBlock({ revieweeId, revieweeName, revieweeRole, completedDeals, compact, maxRecent = 3 }: Props) {
+  const { avg, total, reviews } = useReputation(revieweeId, revieweeRole);
 
   if (compact) {
     return (
@@ -36,7 +39,7 @@ export function ReputationBlock({ subjectId, subjectName, completedDeals, compac
         <StarRating value={avg} readOnly />
         {reviews.length === 0 ? (
           <div className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-            لا توجد تقييمات بعد{subjectName ? ` عن ${subjectName}` : ""}
+            لا توجد تقييمات بعد{revieweeName ? ` عن ${revieweeName}` : ""}
           </div>
         ) : (
           <div className="space-y-2">

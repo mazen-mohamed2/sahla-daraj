@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,10 +12,11 @@ interface Props {
   onOpenChange: (o: boolean) => void;
   escrowId: string;
   reviewer: { id: string; name: string; role: "user" | "agency" };
-  subject: { id: string; name: string; role: "user" | "agency" };
+  reviewee: { id: string; name: string; role: "user" | "agency" };
+  onSubmitted?: () => void;
 }
 
-export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, subject }: Props) {
+export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, reviewee, onSubmitted }: Props) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const submit = useSubmitReview();
@@ -25,6 +26,11 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, subject }
     setTimeout(() => { setRating(5); setComment(""); }, 300);
   };
 
+  const targetLabel =
+    reviewee.role === "agency"
+      ? `المعرض / البائع: ${reviewee.name}`
+      : `المشتري: ${reviewee.name}`;
+
   const handleSubmit = () => {
     if (rating < 1) { toast.error("اختر تقييمًا من 1 إلى 5"); return; }
     submit.mutate(
@@ -33,15 +39,16 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, subject }
         reviewerId: reviewer.id,
         reviewerName: reviewer.name,
         reviewerRole: reviewer.role,
-        subjectId: subject.id,
-        subjectName: subject.name,
-        subjectRole: subject.role,
+        revieweeId: reviewee.id,
+        revieweeName: reviewee.name,
+        revieweeRole: reviewee.role,
         rating,
         comment: comment.trim(),
       },
       {
         onSuccess: () => {
           toast.success("✅ تم إرسال التقييم");
+          onSubmitted?.();
           close();
         },
       },
@@ -52,7 +59,8 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, subject }
     <Dialog open={open} onOpenChange={(o) => !o && close()}>
       <DialogContent dir="rtl">
         <DialogHeader>
-          <DialogTitle>تقييم {subject.name}</DialogTitle>
+          <DialogTitle>قيّم تجربتك مع {reviewee.name}</DialogTitle>
+          <DialogDescription>{targetLabel}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
@@ -61,7 +69,7 @@ export function ReviewDialog({ open, onOpenChange, escrowId, reviewer, subject }
           </div>
           <div>
             <Label>تعليق (اختياري)</Label>
-            <Textarea rows={4} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="شارك تجربتك مع الطرف الآخر..." />
+            <Textarea rows={4} value={comment} onChange={(e) => setComment(e.target.value)} placeholder={`شارك تجربتك مع ${reviewee.name}...`} />
           </div>
         </div>
         <DialogFooter>

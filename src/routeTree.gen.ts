@@ -36,6 +36,7 @@ import { Route as AgencyChatRouteImport } from './routes/agency.chat'
 import { Route as AgencyBidsRouteImport } from './routes/agency.bids'
 import { Route as AgencyAddListingRouteImport } from './routes/agency.add-listing'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminListingsRouteImport } from './routes/admin.listings'
@@ -183,6 +184,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProfileRoute = AdminProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
@@ -292,6 +299,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
@@ -333,6 +341,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/profile': typeof AdminProfileRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/agency/add-listing': typeof AgencyAddListingRoute
   '/agency/bids': typeof AgencyBidsRoute
@@ -375,6 +384,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
+    | '/admin/reviews'
     | '/admin/users'
     | '/agency/add-listing'
     | '/agency/bids'
@@ -412,6 +422,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
+    | '/admin/reviews'
     | '/admin/users'
     | '/agency/add-listing'
     | '/agency/bids'
@@ -452,6 +463,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/notifications'
     | '/admin/profile'
+    | '/admin/reviews'
     | '/admin/users'
     | '/agency/add-listing'
     | '/agency/bids'
@@ -676,6 +688,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/profile': {
       id: '/admin/profile'
       path: '/profile'
@@ -767,6 +786,7 @@ interface AdminRouteChildren {
   AdminListingsRoute: typeof AdminListingsRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminProfileRoute: typeof AdminProfileRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -782,6 +802,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminListingsRoute: AdminListingsRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminProfileRoute: AdminProfileRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

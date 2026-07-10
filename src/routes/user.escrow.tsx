@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { KpiCard } from "@/components/kpi-card";
 import { EscrowDetailsDialog } from "@/components/escrow/escrow-details-dialog";
 import { EscrowReviewAction } from "@/components/reviews/escrow-review-action";
+import { ReviewDialog } from "@/components/reviews/review-dialog";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
 import { Info, ShieldCheck, ShoppingBag, AlertTriangle, CheckCircle2, RefreshCcw, Eye } from "lucide-react";
@@ -24,6 +25,7 @@ function EscrowPage() {
   const role = useAuthStore((s) => s.role);
   const { data, isLoading } = useEscrows();
   const [selected, setSelected] = useState<Escrow | null>(null);
+  const [postReleaseReview, setPostReleaseReview] = useState<Escrow | null>(null);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<string>("all");
 
@@ -152,7 +154,28 @@ function EscrowPage() {
         ))}
       </div>
 
-      <EscrowDetailsDialog escrow={selected} role={role === "admin" ? "admin" : role === "agency" ? "agency" : "user"} open={!!selected} onOpenChange={(o) => !o && setSelected(null)} />
+      <EscrowDetailsDialog
+        escrow={selected}
+        role={role === "admin" ? "admin" : role === "agency" ? "agency" : "user"}
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+        onDeliveryConfirmed={(e) => setPostReleaseReview(e)}
+      />
+
+      {postReleaseReview && (
+        <ReviewDialog
+          open
+          onOpenChange={(o) => { if (!o) setPostReleaseReview(null); }}
+          escrowId={postReleaseReview.id}
+          reviewer={{ id: useAuthStore.getState().phone, name: useAuthStore.getState().name, role: "user" }}
+          reviewee={{
+            id: postReleaseReview.agencyId || postReleaseReview.agencyName,
+            name: postReleaseReview.agencyName,
+            role: "agency",
+          }}
+          onSubmitted={() => setPostReleaseReview(null)}
+        />
+      )}
     </DashboardLayout>
   );
 }
