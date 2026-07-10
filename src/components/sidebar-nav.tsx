@@ -36,6 +36,7 @@ const NAV: Record<"admin" | "agency" | "user", Item[]> = {
     { to: "/agency/tokens", label: "nav.tokens", icon: Coins },
     { to: "/agency/bids", label: "nav.bids", icon: PackageCheck },
     { to: "/agency/escrow", label: "nav.escrow", icon: ShoppingCart },
+    { to: "/agency/reviews", label: "nav.reviews", icon: Star },
     { to: "/agency/chat", label: "nav.chat", icon: MessagesSquare },
     { to: "/agency/notifications", label: "nav.notifications", icon: Bell },
   ],
