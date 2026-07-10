@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ArrowRight, Pencil, Trash2, ShieldCheck, Star, Phone, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { ReputationBlock } from "@/components/reviews/reputation-block";
 import { mockListingDetail } from "@/services/mock-data";
 import { useMoney, formatDateLoc } from "@/lib/format";
 import { useUIStore } from "@/store/ui";
