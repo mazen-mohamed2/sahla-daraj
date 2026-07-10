@@ -21,11 +21,44 @@ import { loadPersisted, savePersisted } from "@/lib/persist";
 const CONV_KEY = "chat:conversations";
 const MSG_KEY = "chat:messages";
 
+/** Normalize a participant so all sides of a conversation use the role
+ *  as the stable ID. In the mock backend one role == one logical actor,
+ *  so this guarantees the User's `me.id` matches whatever the Agency
+ *  previously stored as the peer, and vice versa. */
+function normalizeParticipant<T extends { id: string; role: string }>(p: T): T {
+  return { ...p, id: p.role };
+}
+
+/** Rewrite any legacy participant IDs (`role:phone`, `agency:AG-elite`)
+ *  produced before the shared-identity fix so previously-persisted
+ *  conversations remain reachable after account switch. */
+function migrateConv(c: Conversation): Conversation {
+  const participants = c.participants.map((p) => ({ ...p, id: p.role }));
+  const unread: Record<string, number> = {};
+  for (const [k, v] of Object.entries(c.unread)) {
+    const role = k.includes(":") ? k.split(":")[0] : k;
+    unread[role] = (unread[role] ?? 0) + v;
+  }
+  return { ...c, participants, unread };
+}
+
 function loadConvs(): Conversation[] {
-  return loadPersisted<Conversation[] | null>(CONV_KEY, null) ?? seedConversations();
+  const raw = loadPersisted<Conversation[] | null>(CONV_KEY, null) ?? seedConversations();
+  return raw.map(migrateConv);
 }
 function loadMsgs(): Record<string, ChatMessage[]> {
-  return loadPersisted<Record<string, ChatMessage[]> | null>(MSG_KEY, null) ?? seedMessages();
+  const raw = loadPersisted<Record<string, ChatMessage[]> | null>(MSG_KEY, null) ?? seedMessages();
+  const out: Record<string, ChatMessage[]> = {};
+  for (const [convId, list] of Object.entries(raw)) {
+    out[convId] = list.map((m) => {
+      const senderId = m.senderId === "system"
+        ? "system"
+        : m.senderId.includes(":") ? m.senderId.split(":")[0] : m.senderId;
+      const readBy = m.readBy.map((r) => (r.includes(":") ? r.split(":")[0] : r));
+      return { ...m, senderId, readBy } as ChatMessage;
+    });
+  }
+  return out;
 }
 function saveConvs(c: Conversation[]) { savePersisted(CONV_KEY, c); }
 function saveMsgs(m: Record<string, ChatMessage[]>) { savePersisted(MSG_KEY, m); }
@@ -104,11 +137,15 @@ export const mockChatService: ChatService = {
     await delay();
     return loadMsgs()[conversationId] ?? [];
   },
-  async startConversation({ me, peer, related }) {
+  async startConversation({ me: rawMe, peer: rawPeer, related }) {
     await delay(150);
+    // Collapse to role-scoped identity so both sides of the conversation
+    // resolve to the same participant IDs across accounts and refreshes.
+    const me = normalizeParticipant(rawMe);
+    const peer = normalizeParticipant(rawPeer);
     const convs = loadConvs();
-    // Reuse an existing conversation between the same two participants
-    // for the same related entity, so entry points don't duplicate threads.
+    // Reuse an existing conversation between the same two roles for the
+    // same related entity so entry points don't duplicate threads.
     const existing = convs.find(
       (c) =>
         c.participants.length === 2 &&
@@ -125,7 +162,6 @@ export const mockChatService: ChatService = {
       createdAt: nowIso(),
     };
     saveConvs([conv, ...convs]);
-    // Seed a system message so the timeline never opens empty.
     const sys: ChatMessage = {
       id: uid("m"),
       conversationId: conv.id,
