@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { KpiCard } from "@/components/kpi-card";
 import { EscrowDetailsDialog } from "@/components/escrow/escrow-details-dialog";
+import { EscrowReviewAction } from "@/components/reviews/escrow-review-action";
 import { formatDate } from "@/services/mock-data";
 import { useMoney } from "@/lib/format";
 import { Info, ShieldCheck, ShoppingBag, AlertTriangle, CheckCircle2, RefreshCcw, Eye } from "lucide-react";
