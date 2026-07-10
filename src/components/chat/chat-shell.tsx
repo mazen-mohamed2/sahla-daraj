@@ -361,7 +361,7 @@ function OfferCardBubble({
       if (decision === "accepted") {
         acceptImportOffer.mutate({ offerId: offer.offerId, requestId: offer.requestId });
       } else {
-        rejectImportOffer.mutate({ offerId: offer.offerId, requestId: offer.requestId, reason: "رفض من المحادثة" });
+        rejectImportOffer.mutate({ offerId: offer.offerId, reason: "رفض من المحادثة" });
       }
     }
     respond.mutate({ messageId, decision });
