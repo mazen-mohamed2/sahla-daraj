@@ -7,6 +7,7 @@ import { useMoney } from "@/lib/format";
 import { Car, Coins, Gavel, TrendingUp } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReputationSummaryCard } from "@/components/reviews/reputation-summary-card";
 
 export const Route = createFileRoute("/agency/")({ component: AgencyOverview });
 
@@ -22,6 +23,10 @@ function AgencyOverview() {
         <KpiCard title="رصيد التوكن" value="2,450" icon={Coins} tone="warning" />
         <KpiCard title="العروض النشطة" value="14" icon={Gavel} tone="success" />
         <KpiCard title="إيرادات الشهر" value={money(298000)} icon={TrendingUp} change="+18%" tone="success" />
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="md:col-span-1"><ReputationSummaryCard role="agency" /></div>
       </div>
 
       <Card className="mt-6">

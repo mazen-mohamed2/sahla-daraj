@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Car, Wallet, ShieldCheck, Heart, Plus } from "lucide-react";
 import { useMoney } from "@/lib/format";
 import { useEscrows, useListings } from "@/hooks/queries";
+import { ReputationSummaryCard } from "@/components/reviews/reputation-summary-card";
 
 export const Route = createFileRoute("/user/")({ component: UserOverview });
 
@@ -42,6 +43,10 @@ function UserOverview() {
             <Button variant="outline" asChild><Link to="/user/chat">الشات</Link></Button>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="md:col-span-1"><ReputationSummaryCard role="user" /></div>
       </div>
     </DashboardLayout>
   );

@@ -167,6 +167,7 @@ function EscrowPage() {
           open
           onOpenChange={(o) => { if (!o) setPostReleaseReview(null); }}
           escrowId={postReleaseReview.id}
+          vehicle={postReleaseReview.vehicle}
           reviewer={{ id: useAuthStore.getState().phone, name: useAuthStore.getState().name, role: "user" }}
           reviewee={{
             id: postReleaseReview.agencyId || postReleaseReview.agencyName,

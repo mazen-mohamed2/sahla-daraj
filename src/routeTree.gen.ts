@@ -19,6 +19,7 @@ import { Route as AgencyIndexRouteImport } from './routes/agency.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserWalletRouteImport } from './routes/user.wallet'
 import { Route as UserSettingsRouteImport } from './routes/user.settings'
+import { Route as UserReviewsRouteImport } from './routes/user.reviews'
 import { Route as UserProfileRouteImport } from './routes/user.profile'
 import { Route as UserNotificationsRouteImport } from './routes/user.notifications'
 import { Route as UserListingsRouteImport } from './routes/user.listings'
@@ -28,6 +29,7 @@ import { Route as UserEscrowRouteImport } from './routes/user.escrow'
 import { Route as UserCreateListingRouteImport } from './routes/user.create-listing'
 import { Route as UserChatRouteImport } from './routes/user.chat'
 import { Route as AgencyTokensRouteImport } from './routes/agency.tokens'
+import { Route as AgencyReviewsRouteImport } from './routes/agency.reviews'
 import { Route as AgencyNotificationsRouteImport } from './routes/agency.notifications'
 import { Route as AgencyListingsRouteImport } from './routes/agency.listings'
 import { Route as AgencyInventoryRouteImport } from './routes/agency.inventory'
@@ -99,6 +101,11 @@ const UserSettingsRoute = UserSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => UserRoute,
 } as any)
+const UserReviewsRoute = UserReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -142,6 +149,11 @@ const UserChatRoute = UserChatRouteImport.update({
 const AgencyTokensRoute = AgencyTokensRouteImport.update({
   id: '/tokens',
   path: '/tokens',
+  getParentRoute: () => AgencyRoute,
+} as any)
+const AgencyReviewsRoute = AgencyReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
   getParentRoute: () => AgencyRoute,
 } as any)
 const AgencyNotificationsRoute = AgencyNotificationsRouteImport.update({
@@ -270,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -279,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/user/listings': typeof UserListingsRouteWithChildren
   '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/reviews': typeof UserReviewsRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -308,6 +322,7 @@ export interface FileRoutesByTo {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -317,6 +332,7 @@ export interface FileRoutesByTo {
   '/user/listings': typeof UserListingsRouteWithChildren
   '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/reviews': typeof UserReviewsRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin': typeof AdminIndexRoute
@@ -350,6 +366,7 @@ export interface FileRoutesById {
   '/agency/inventory': typeof AgencyInventoryRoute
   '/agency/listings': typeof AgencyListingsRoute
   '/agency/notifications': typeof AgencyNotificationsRoute
+  '/agency/reviews': typeof AgencyReviewsRoute
   '/agency/tokens': typeof AgencyTokensRoute
   '/user/chat': typeof UserChatRoute
   '/user/create-listing': typeof UserCreateListingRoute
@@ -359,6 +376,7 @@ export interface FileRoutesById {
   '/user/listings': typeof UserListingsRouteWithChildren
   '/user/notifications': typeof UserNotificationsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/reviews': typeof UserReviewsRoute
   '/user/settings': typeof UserSettingsRoute
   '/user/wallet': typeof UserWalletRoute
   '/admin/': typeof AdminIndexRoute
@@ -393,6 +411,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -402,6 +421,7 @@ export interface FileRouteTypes {
     | '/user/listings'
     | '/user/notifications'
     | '/user/profile'
+    | '/user/reviews'
     | '/user/settings'
     | '/user/wallet'
     | '/admin/'
@@ -431,6 +451,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -440,6 +461,7 @@ export interface FileRouteTypes {
     | '/user/listings'
     | '/user/notifications'
     | '/user/profile'
+    | '/user/reviews'
     | '/user/settings'
     | '/user/wallet'
     | '/admin'
@@ -472,6 +494,7 @@ export interface FileRouteTypes {
     | '/agency/inventory'
     | '/agency/listings'
     | '/agency/notifications'
+    | '/agency/reviews'
     | '/agency/tokens'
     | '/user/chat'
     | '/user/create-listing'
@@ -481,6 +504,7 @@ export interface FileRouteTypes {
     | '/user/listings'
     | '/user/notifications'
     | '/user/profile'
+    | '/user/reviews'
     | '/user/settings'
     | '/user/wallet'
     | '/admin/'
@@ -569,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserSettingsRouteImport
       parentRoute: typeof UserRoute
     }
+    '/user/reviews': {
+      id: '/user/reviews'
+      path: '/reviews'
+      fullPath: '/user/reviews'
+      preLoaderRoute: typeof UserReviewsRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/user/profile': {
       id: '/user/profile'
       path: '/profile'
@@ -630,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/tokens'
       fullPath: '/agency/tokens'
       preLoaderRoute: typeof AgencyTokensRouteImport
+      parentRoute: typeof AgencyRoute
+    }
+    '/agency/reviews': {
+      id: '/agency/reviews'
+      path: '/reviews'
+      fullPath: '/agency/reviews'
+      preLoaderRoute: typeof AgencyReviewsRouteImport
       parentRoute: typeof AgencyRoute
     }
     '/agency/notifications': {
@@ -817,6 +855,7 @@ interface AgencyRouteChildren {
   AgencyInventoryRoute: typeof AgencyInventoryRoute
   AgencyListingsRoute: typeof AgencyListingsRoute
   AgencyNotificationsRoute: typeof AgencyNotificationsRoute
+  AgencyReviewsRoute: typeof AgencyReviewsRoute
   AgencyTokensRoute: typeof AgencyTokensRoute
   AgencyIndexRoute: typeof AgencyIndexRoute
 }
@@ -829,6 +868,7 @@ const AgencyRouteChildren: AgencyRouteChildren = {
   AgencyInventoryRoute: AgencyInventoryRoute,
   AgencyListingsRoute: AgencyListingsRoute,
   AgencyNotificationsRoute: AgencyNotificationsRoute,
+  AgencyReviewsRoute: AgencyReviewsRoute,
   AgencyTokensRoute: AgencyTokensRoute,
   AgencyIndexRoute: AgencyIndexRoute,
 }
@@ -857,6 +897,7 @@ interface UserRouteChildren {
   UserListingsRoute: typeof UserListingsRouteWithChildren
   UserNotificationsRoute: typeof UserNotificationsRoute
   UserProfileRoute: typeof UserProfileRoute
+  UserReviewsRoute: typeof UserReviewsRoute
   UserSettingsRoute: typeof UserSettingsRoute
   UserWalletRoute: typeof UserWalletRoute
   UserIndexRoute: typeof UserIndexRoute
@@ -871,6 +912,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserListingsRoute: UserListingsRouteWithChildren,
   UserNotificationsRoute: UserNotificationsRoute,
   UserProfileRoute: UserProfileRoute,
+  UserReviewsRoute: UserReviewsRoute,
   UserSettingsRoute: UserSettingsRoute,
   UserWalletRoute: UserWalletRoute,
   UserIndexRoute: UserIndexRoute,
