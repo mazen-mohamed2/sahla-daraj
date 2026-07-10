@@ -12,7 +12,8 @@ import { useAuthStore } from "@/store/auth";
  */
 export function EscrowReviewAction({ escrow, viewerRole }: { escrow: Escrow; viewerRole: "user" | "agency" }) {
   const [open, setOpen] = useState(false);
-  const me = useAuthStore((s) => ({ name: s.name, phone: s.phone }));
+  const meName = useAuthStore((s) => s.name);
+  const mePhone = useAuthStore((s) => s.phone);
   const hasReviewed = useHasReviewed(escrow.id, viewerRole);
 
   if (escrow.status !== "released") return null;
