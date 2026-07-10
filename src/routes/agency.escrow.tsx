@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KpiCard } from "@/components/kpi-card";
 import { EscrowDetailsDialog } from "@/components/escrow/escrow-details-dialog";
+import { EscrowReviewAction } from "@/components/reviews/escrow-review-action";
 import { useMoney } from "@/lib/format";
 import { formatDate } from "@/services/mock-data";
 import { ShieldCheck, ShoppingBag, Truck, CheckCircle2, Eye } from "lucide-react";
