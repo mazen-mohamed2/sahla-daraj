@@ -124,8 +124,9 @@ function Tokens() {
   const purchase = usePurchaseTokens();
   const notify = useNotifications((s) => s.add);
 
-  const [balance, setBalance] = useState(2450);
-  const [history, setHistory] = useState<TokenTx[]>(seedHistory);
+  const [balance, setBalance] = usePersistedState<number>("agency-token-balance", 2450);
+  const [history, setHistory] = usePersistedState<TokenTx[]>("agency-token-history", seedHistory);
+
 
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
