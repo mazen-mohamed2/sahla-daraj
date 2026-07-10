@@ -13,6 +13,7 @@ import {
   type DisputeStatus,
 } from "@/services/escrow-data";
 import { notify } from "@/store/notifications";
+import { audit } from "@/store/audit";
 import { useAuthStore } from "@/store/auth";
 import type { WalletBalance, WalletTx } from "@/hooks/wallet";
 
